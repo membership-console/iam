@@ -59,10 +59,6 @@ project:
     map:
       package: db.mapper.base
 
-auth:
-  session-timeout: 10800
-  type: Bearer
-
 mybatis:
   configuration:
     mapUnderscoreToCamelCase: true
