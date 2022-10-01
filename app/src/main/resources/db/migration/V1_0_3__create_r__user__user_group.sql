@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `r_user_user_group`
+CREATE TABLE IF NOT EXISTS `r__user__user_group`
 (
     `user_id`       INT UNSIGNED NOT NULL,
     `user_group_id` INT UNSIGNED NOT NULL,
