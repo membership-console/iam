@@ -1,0 +1,11 @@
+test {
+    useJUnitPlatform()
+    systemProperty "spring.profiles.active", "test"
+    // systemProperty "spring.test.context.cache.maxSize", 10
+    systemProperties System.properties
+
+    // testLogging {
+    //     exceptionFormat "full"
+    //     showStandardStreams true
+    // }
+}
