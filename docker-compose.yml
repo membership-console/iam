@@ -4,10 +4,10 @@ services:
     build: ./docker/mysql
     restart: always
     environment:
-      MYSQL_DATABASE: "membership-console-iam"
-      MYSQL_USER: "membership-console-iam"
-      MYSQL_PASSWORD: "membership-console-iam"
-      MYSQL_ROOT_PASSWORD: "membership-console-iam"
+      MYSQL_DATABASE: "iam"
+      MYSQL_USER: "iam"
+      MYSQL_PASSWORD: "iam"
+      MYSQL_ROOT_PASSWORD: "iam"
       TZ: "Asia/Tokyo"
     ports:
       - "3306:3306"
@@ -19,10 +19,10 @@ services:
     build: ./docker/mysql
     restart: always
     environment:
-      MYSQL_DATABASE: "membership-console-iam"
-      MYSQL_USER: "membership-console-iam"
-      MYSQL_PASSWORD: "membership-console-iam"
-      MYSQL_ROOT_PASSWORD: "membership-console-iam"
+      MYSQL_DATABASE: "iam"
+      MYSQL_USER: "iam"
+      MYSQL_PASSWORD: "iam"
+      MYSQL_ROOT_PASSWORD: "iam"
       TZ: "Asia/Tokyo"
     ports:
       - "3307:3306"

@@ -7,11 +7,11 @@ import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(nameGenerator = MembershipConsoleIamApplication.FQCNBeanNameGenerator.class)
-public class MembershipConsoleIamApplication {
+@ComponentScan(nameGenerator = IamApplication.FQCNBeanNameGenerator.class)
+public class IamApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MembershipConsoleIamApplication.class, args);
+        SpringApplication.run(IamApplication.class, args);
     }
 
     static class FQCNBeanNameGenerator extends AnnotationBeanNameGenerator {
