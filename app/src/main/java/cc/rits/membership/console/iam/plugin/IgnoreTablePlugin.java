@@ -13,7 +13,8 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
  */
 public class IgnoreTablePlugin extends PluginAdapter {
 
-    private final List<String> IGNORE_TABLES = List.of( //
+    private final List<String> IGNORE_TABLE_PATTERNS = List.of( //
+        "r_.+", // 関連テーブル
         "flyway_schema_history", //
         "SPRING_SESSION", //
         "SPRING_SESSION_ATTRIBUTES" //
@@ -26,7 +27,7 @@ public class IgnoreTablePlugin extends PluginAdapter {
 
     private boolean checkIsTableToGenerate(final IntrospectedTable introspectedTable) {
         final var tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime().replace("`", "");
-        return this.IGNORE_TABLES.stream().noneMatch(tableName::equals);
+        return this.IGNORE_TABLE_PATTERNS.stream().noneMatch(tableName::matches);
     }
 
     @Override
