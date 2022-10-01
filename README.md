@@ -1,11 +1,11 @@
-# Membership Console IAM
+# IAM
 
 ![CI](https://github.com/averak/membership-console-iam/workflows/CI/badge.svg)
 ![version](https://img.shields.io/badge/version-1.0.0__SNAPSHOT-blue.svg)
 
 ## 概要
 
-本プロジェクトは[averak/membership-console](https://github.com/averak/membership-console)のIAM機能を提供します。
+本プロジェクトはMembership ConsoleのIAM機能を提供します。
 
 ## 開発
 
@@ -39,7 +39,7 @@ $ docker compose up -d
 ```sh
 # 1. run .jar file
 # -Dspring.profiles.activeを指定しない場合はlocalになる
-$ java -jar membership-console-iam-<version>.jar  # -Dspring.profiles.active=<environment>
+$ java -jar iam-<version>.jar  # -Dspring.profiles.active=<environment>
 
 # 2. run on dev environment
 $ ./gradlew bootRun

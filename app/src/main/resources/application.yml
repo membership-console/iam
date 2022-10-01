@@ -45,7 +45,7 @@ server:
       timeout: 3h
 
 project:
-  name: membership-console.rits.cc
+  name: iam
   version: 1.0.0_SNAPSHOT
   package: cc.rits.membership.console.iam
   mybatis:
@@ -58,10 +58,6 @@ project:
       type: XMLMAPPER
     map:
       package: db.mapper.base
-
-auth:
-  session-timeout: 10800
-  type: Bearer
 
 mybatis:
   configuration:

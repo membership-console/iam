@@ -1,9 +1,12 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.AbstractDatabaseSpecification
+import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.exception.BaseException
 import cc.rits.membership.console.iam.helper.JsonConvertHelper
+import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.infrastructure.api.response.ErrorResponse
+import cc.rits.membership.console.iam.util.AuthUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -21,6 +24,7 @@ import spock.lang.Shared
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
+import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME
 
 /**
  * RestController統合テストの基底クラス
@@ -38,8 +42,21 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     @Autowired
     private MessageSource messageSource
 
+    @Autowired
+    protected AuthUtil authUtil
+
     @Shared
     protected MockHttpSession session = new MockHttpSession()
+
+    /**
+     * ログインユーザのID
+     */
+    static final LOGIN_USER_ID = 1
+
+    /**
+     * ログインユーザのメールアドレス
+     */
+    static final LOGIN_USER_EMAIL = RandomHelper.email()
 
     /**
      * GET request
@@ -189,6 +206,36 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         final messageKey = exception.errorCode.messageKey
         final args = exception.args
         return this.messageSource.getMessage(messageKey, args, Locale.ENGLISH)
+    }
+
+    /**
+     * ログイン
+     *
+     * @return ログインユーザ
+     */
+    protected UserModel login() {
+        final user = UserModel.builder()
+            .id(LOGIN_USER_ID)
+            .firstName(RandomHelper.alphanumeric(10))
+            .lastName(RandomHelper.alphanumeric(10))
+            .email(LOGIN_USER_EMAIL)
+            .password(RandomHelper.password())
+            .entranceYear(2000)
+            .build()
+
+        sql.dataSet("user").add(
+            id: user.id,
+            first_name: user.firstName,
+            last_name: user.lastName,
+            email: user.email,
+            password: this.authUtil.hashingPassword(user.password),
+            entrance_year: user.entranceYear,
+        )
+
+        this.session = new MockHttpSession()
+        this.session.setAttribute(PRINCIPAL_NAME_INDEX_NAME, user.email)
+
+        return user
     }
 
     /**

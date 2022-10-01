@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupMapper">
+    <resultMap id="BaseResultMap" type="cc.rits.membership.console.iam.infrastructure.db.entity.UserGroup"
+               extends="cc.rits.membership.console.iam.infrastructure.db.mapper.base.UserGroupBaseMapper.BaseResultMap"/>
+    <resultMap id="BaseUserGroupRoleResultMap"
+               type="cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRole"
+               extends="cc.rits.membership.console.iam.infrastructure.db.mapper.base.UserGroupRoleBaseMapper.BaseResultMap"/>
+
+
+    <resultMap id="UserGroupWithRolesResultMap"
+               type="cc.rits.membership.console.iam.infrastructure.db.entity.join.UserGroupWithRoles"
+               extends="BaseResultMap">
+        <collection property="roles" resultMap="BaseUserGroupRoleResultMap" columnPrefix="role__">
+        </collection>
+    </resultMap>
+
+</mapper>
