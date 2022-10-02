@@ -1,13 +1,13 @@
 package cc.rits.membership.console.iam.domain.model;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRole;
 import cc.rits.membership.console.iam.infrastructure.db.entity.join.UserGroupWithRoles;
 import lombok.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * ユーザグループモデル
