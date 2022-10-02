@@ -1,12 +1,14 @@
 package cc.rits.membership.console.iam.domain.model;
 
-import cc.rits.membership.console.iam.enums.Role;
-import cc.rits.membership.console.iam.infrastructure.db.entity.join.UserWithUserGroups;
-import lombok.*;
-
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import cc.rits.membership.console.iam.annotation.SwaggerHiddenParameter;
+import cc.rits.membership.console.iam.enums.Role;
+import cc.rits.membership.console.iam.infrastructure.db.entity.join.UserWithUserGroups;
+import lombok.*;
 
 /**
  * ユーザモデル
@@ -15,7 +17,8 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserModel {
+@SwaggerHiddenParameter
+public class UserModel implements Serializable {
 
     /**
      * ユーザID

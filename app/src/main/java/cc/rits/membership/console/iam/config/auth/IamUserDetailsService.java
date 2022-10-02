@@ -24,7 +24,7 @@ public class IamUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         final var authorities = AuthorityUtils.createAuthorityList("ROLE_USER");
         return this.userRepository.selectByEmail(email) //
-            .map(shopUserModel -> new LoginUserDetails(shopUserModel, authorities)) //
+            .map(userModel -> new LoginUserDetails(userModel, authorities)) //
             .orElseThrow(() -> new UsernameNotFoundException(null));
     }
 

@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Login Shop User Details
+ * Login User Details
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
