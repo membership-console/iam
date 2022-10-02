@@ -1,7 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.AbstractDatabaseSpecification
-import cc.rits.membership.console.iam.config.auth.IamUserDetailsService
+import cc.rits.membership.console.iam.config.auth.LoginUserDetails
 import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.exception.BaseException
 import cc.rits.membership.console.iam.helper.JsonConvertHelper
@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -44,9 +45,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
 
     @Autowired
     private MessageSource messageSource
-
-    @Autowired
-    private IamUserDetailsService userDetailsService;
 
     @Autowired
     protected AuthUtil authUtil
@@ -247,7 +245,8 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             entrance_year: user.entranceYear,
         )
 
-        final userDetails = this.userDetailsService.loadUserByUsername(user.email)
+        final authorities = AuthorityUtils.createAuthorityList("ROLE_USER")
+        final userDetails = new LoginUserDetails(user, authorities)
         this.authentication = new UsernamePasswordAuthenticationToken(userDetails, user.password, userDetails.authorities)
 
         return user

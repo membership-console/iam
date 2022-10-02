@@ -37,7 +37,7 @@ class AbstractDatabaseSpecification extends AbstractSpecification {
      * cleanup after test case
      */
     def cleanup() {
-        // DBを初期化するために、テスト開始前にロールバック
+        // DBを初期化するために、テスト終了時にロールバック
         sql.rollback()
     }
 
