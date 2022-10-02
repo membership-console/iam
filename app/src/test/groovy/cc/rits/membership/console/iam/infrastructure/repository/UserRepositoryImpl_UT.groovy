@@ -4,6 +4,9 @@ import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.helper.TableHelper
 import org.springframework.beans.factory.annotation.Autowired
 
+/**
+ * UserRepositoryの単体テスト
+ */
 class UserRepositoryImpl_UT extends AbstractRepository_UT {
 
     @Autowired
