@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginRequest;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
 import cc.rits.membership.console.iam.usecase.LoginUseCase;
+import cc.rits.membership.console.iam.usecase.LogoutUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,8 @@ public class AuthRestController {
 
     private final LoginUseCase loginUseCase;
 
+    private final LogoutUseCase logoutUseCase;
+
     /**
      * ログインAPI
      *
@@ -34,6 +37,15 @@ public class AuthRestController {
         @RequestValidated @RequestBody final LoginRequest requestBody //
     ) {
         this.loginUseCase.handle(requestBody);
+    }
+
+    /**
+     * ログアウトAPI
+     */
+    @PostMapping("logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout() {
+        this.logoutUseCase.handle();
     }
 
 }

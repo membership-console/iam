@@ -124,7 +124,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handle username not fonud excepion
+     * Handle username not found exception
      * 
      * @param exception exception
      * @return then response entity

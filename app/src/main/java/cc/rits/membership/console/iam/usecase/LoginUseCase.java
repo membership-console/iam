@@ -1,11 +1,9 @@
 package cc.rits.membership.console.iam.usecase;
 
-import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +20,6 @@ public class LoginUseCase {
 
     private final IamAuthenticationProvider authenticationProvider;
 
-    private final HttpSession httpSession;
-
     private final HttpServletRequest httpServletRequest;
 
     /**
@@ -37,7 +33,7 @@ public class LoginUseCase {
             .authenticate(new UsernamePasswordAuthenticationToken(requestBody.getEmail(), requestBody.getPassword()));
 
         // セッションにログイン情報を記録
-        this.httpSession.setAttribute(PRINCIPAL_NAME_INDEX_NAME, authentication.getName());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         this.httpServletRequest.changeSessionId();
     }
 

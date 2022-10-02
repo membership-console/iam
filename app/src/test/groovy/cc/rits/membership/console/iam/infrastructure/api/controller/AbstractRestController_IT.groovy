@@ -1,6 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.AbstractDatabaseSpecification
+import cc.rits.membership.console.iam.config.auth.IamUserDetailsService
 import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.exception.BaseException
 import cc.rits.membership.console.iam.helper.JsonConvertHelper
@@ -12,6 +13,8 @@ import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpSession
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -22,9 +25,9 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.context.WebApplicationContext
 import spock.lang.Shared
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
-import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME
 
 /**
  * RestController統合テストの基底クラス
@@ -43,10 +46,16 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     private MessageSource messageSource
 
     @Autowired
+    private IamUserDetailsService userDetailsService;
+
+    @Autowired
     protected AuthUtil authUtil
 
     @Shared
     protected MockHttpSession session = new MockHttpSession()
+
+    @Shared
+    protected Authentication authentication = null
 
     /**
      * ログインユーザのID
@@ -68,6 +77,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     MockHttpServletRequestBuilder getRequest(final String path) {
         return MockMvcRequestBuilders.get(path)
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -81,6 +91,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     MockHttpServletRequestBuilder postRequest(final String path) {
         return MockMvcRequestBuilders.post(path)
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -97,6 +108,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .params(params)
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -113,6 +125,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(JsonConvertHelper.convertObjectToJson(content))
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -129,6 +142,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(JsonConvertHelper.convertObjectToJson(content))
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -142,6 +156,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     MockHttpServletRequestBuilder deleteRequest(final String path) {
         return MockMvcRequestBuilders.delete(path)
             .session(this.session)
+            .with(authentication(this.authentication))
             .with(csrf())
     }
 
@@ -232,8 +247,8 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             entrance_year: user.entranceYear,
         )
 
-        this.session = new MockHttpSession()
-        this.session.setAttribute(PRINCIPAL_NAME_INDEX_NAME, user.email)
+        final userDetails = this.userDetailsService.loadUserByUsername(user.email)
+        this.authentication = new UsernamePasswordAuthenticationToken(userDetails, user.password, userDetails.authorities)
 
         return user
     }
@@ -245,6 +260,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         if (!this.session.invalid) {
             this.session.invalidate()
         }
+        this.authentication = null
     }
 
     /**
