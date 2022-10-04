@@ -37,4 +37,38 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         result*.roles == [[Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN], [Role.PURCHASE_REQUEST_ADMIN]]
     }
 
+    def "selectById: IDからユーザグループを取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "グループA"
+            2  | "グループB"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+            1             | Role.PURCHASE_REQUEST_ADMIN.id
+            2             | Role.PURCHASE_REQUEST_ADMIN.id
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.selectById(1)
+
+        then:
+        result.isPresent()
+        result.get().id == 1
+        result.get().name == "グループA"
+        result.get().roles == [Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN]
+    }
+
+    def "selectById: 存在しない場合はOptional.empty()を返す"() {
+        when:
+        final result = this.sut.selectById(1)
+
+        then:
+        result.isEmpty()
+    }
+
 }

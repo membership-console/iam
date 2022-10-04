@@ -25,4 +25,15 @@
                  LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
     </select>
 
+    <select id="selectById" resultMap="UserGroupWithRolesResultMap">
+        SELECT DISTINCT user_group.*,
+
+                        user_group_role.user_group_id AS role__user_group_id,
+                        user_group_role.role_id       AS role__role_id
+
+        FROM iam.user_group
+                 LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
+        WHERE user_group.id = #{userGroupId}
+    </select>
+
 </mapper>
