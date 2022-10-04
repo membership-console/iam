@@ -1,6 +1,6 @@
 # IAM
 
-![CI](https://github.com/averak/membership-console-iam/workflows/CI/badge.svg)
+![CI](https://github.com/membership-console/membership-console-iam/workflows/CI/badge.svg)
 ![version](https://img.shields.io/badge/version-1.0.0__SNAPSHOT-blue.svg)
 
 ## 概要
