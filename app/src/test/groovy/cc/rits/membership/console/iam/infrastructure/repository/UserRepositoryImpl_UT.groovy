@@ -60,4 +60,22 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result.isEmpty()
     }
 
+    def "selectAll: ユーザリストを全件取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email               | password | entrance_year
+            1  | ""         | ""        | "user1@example.com" | ""       | 2000
+            2  | ""         | ""        | "user2@example.com" | ""       | 2000
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.selectAll()
+
+        then:
+        result*.id == [1, 2]
+        result*.email == ["user1@example.com", "user2@example.com"]
+    }
+
 }

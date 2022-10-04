@@ -1,6 +1,6 @@
 package cc.rits.membership.console.iam.usecase
 
-import cc.rits.membership.console.iam.domain.model.UserGroupModel
+
 import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.exception.BaseException
@@ -10,19 +10,19 @@ import cc.rits.membership.console.iam.helper.RandomHelper
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
- * GetUserGroupsUseCaseの単体テスト
+ * GetUsersUseCaseの単体テスト
  */
-class GetUserGroupsUseCase_UT extends AbstractUseCase_UT {
+class GetUsersUseCase_UT extends AbstractUseCase_UT {
 
     @Autowired
-    GetUserGroupsUseCase sut
+    GetUsersUseCase sut
 
-    def "handle: IAMの閲覧者がユーザグループリストを取得"() {
+    def "handle: IAMの閲覧者がユーザリストを取得"() {
         given:
         final loginUser = Spy(UserModel)
-        final userGroups = [
-            RandomHelper.mock(UserGroupModel),
-            RandomHelper.mock(UserGroupModel),
+        final users = [
+            RandomHelper.mock(UserModel),
+            RandomHelper.mock(UserModel),
         ]
 
         when:
@@ -30,11 +30,11 @@ class GetUserGroupsUseCase_UT extends AbstractUseCase_UT {
 
         then:
         1 * loginUser.hasRole(Role.IAM_VIEWER) >> true
-        1 * this.userGroupRepository.selectAll() >> userGroups
-        result == userGroups
+        1 * this.userRepository.selectAll() >> users
+        result == users
     }
 
-    def "handle: IAMの閲覧者以外はユーザグループリストを取得不可"() {
+    def "handle: IAMの閲覧者以外はユーザリストを取得不可"() {
         given:
         final loginUser = Spy(UserModel)
 

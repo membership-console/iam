@@ -1,5 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller;
 
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
+import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
+import cc.rits.membership.console.iam.usecase.GetUsersUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +26,24 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequiredArgsConstructor
 public class UserRestController {
+
+    private final GetUsersUseCase getUsersUseCase;
+
+    /**
+     * ユーザリスト取得API
+     *
+     * @param loginUser ログインユーザ
+     */
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UsersResponse getUsers( //
+        final UserModel loginUser //
+    ) {
+        final var users = this.getUsersUseCase.handle(loginUser).stream() //
+            .map(UserResponse::new) //
+            .collect(Collectors.toList());
+        return new UsersResponse(users);
+    }
 
     /**
      * ログインユーザ取得API
