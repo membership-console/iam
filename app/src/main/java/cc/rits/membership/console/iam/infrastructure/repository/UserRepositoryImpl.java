@@ -1,6 +1,8 @@
 package cc.rits.membership.console.iam.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +23,13 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserModel> selectByEmail(final String email) {
         return this.userMapper.selectByEmail(email).map(UserModel::new);
+    }
+
+    @Override
+    public List<UserModel> selectAll() {
+        return this.userMapper.selectAll().stream() //
+            .map(UserModel::new) //
+            .collect(Collectors.toList());
     }
 
 }
