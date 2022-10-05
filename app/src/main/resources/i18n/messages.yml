@@ -4,6 +4,9 @@ exception:
     invalid_request_parameter: "不正なリクエストです。問題が解決しない場合は、管理者までご連絡ください。"
     invalid_password_length: "パスワードの長さは8~32文字にしてください。"
     password_is_too_simple: "パスワードには大文字・小文字・数字を含める必要があります。"
+    invalid_user_group_name: "ユーザグループ名は1~255文字にしてください。"
+    invalid_user_group_roles: "不正なロールが指定されました。"
+    user_group_roles_must_not_be_empty: "ユーザグループには最低1個以上のロールを割り当てる必要があります。"
   unauthorized:
     user_not_logged_in: "ユーザはログインしていません。問題が解決しない場合は、管理者までご連絡ください。"
     incorrect_email_or_password: "メールアドレスかパスワードが間違っています。"
@@ -12,5 +15,7 @@ exception:
   not_found:
     api: "APIが見つかりません。"
     user_group: "ユーザグループが見つかりません。"
+  conflict:
+    user_group_name_is_already_used: "そのユーザグループ名は既に使われています。"
   internal_server_error:
     unexpected_error: "予期しないエラーが発生しました。問題が解決しない場合は、管理者までご連絡ください。"

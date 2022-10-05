@@ -1,6 +1,5 @@
 package cc.rits.membership.console.iam.usecase
 
-
 import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.exception.BaseException

@@ -8,8 +8,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
+import cc.rits.membership.console.iam.infrastructure.api.request.UserGroupUpsertRequest;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupsResponse;
+import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
+import cc.rits.membership.console.iam.usecase.CreateUserGroupUseCase;
 import cc.rits.membership.console.iam.usecase.GetUserGroupUseCase;
 import cc.rits.membership.console.iam.usecase.GetUserGroupsUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +31,8 @@ public class UserGroupRestController {
     private final GetUserGroupsUseCase getUserGroupsUseCase;
 
     private final GetUserGroupUseCase getUserGroupUseCase;
+
+    private final CreateUserGroupUseCase createUserGroupUseCase;
 
     /**
      * ユーザグループリスト取得API
@@ -59,6 +64,21 @@ public class UserGroupRestController {
         @PathVariable("user_group_id") final Integer userGroupId //
     ) {
         return new UserGroupResponse(this.getUserGroupUseCase.handle(loginUser, userGroupId));
+    }
+
+    /**
+     * ユーザグループ作成API
+     *
+     * @param loginUser ログインユーザ
+     * @param requestBody ユーザグループ作成リクエスト
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUserGroup( //
+        final UserModel loginUser, //
+        @RequestValidated @RequestBody final UserGroupUpsertRequest requestBody //
+    ) {
+        this.createUserGroupUseCase.handle(loginUser, requestBody);
     }
 
 }

@@ -1,6 +1,5 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
-
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.exception.ErrorCode
 import cc.rits.membership.console.iam.exception.ForbiddenException

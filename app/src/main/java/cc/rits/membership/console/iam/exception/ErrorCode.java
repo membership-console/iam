@@ -23,6 +23,12 @@ public enum ErrorCode {
 
     PASSWORD_IS_TOO_SIMPLE(HttpStatus.BAD_REQUEST, "exception.bad_request.password_is_too_simple"),
 
+    INVALID_USER_GROUP_NAME(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_group_name"),
+
+    INVALID_USER_GROUP_ROLES(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_group_roles"),
+
+    USER_GROUP_ROLES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.user_group_roles_must_not_be_empty"),
+
     /**
      * 401 Unauthorized
      */
@@ -41,6 +47,11 @@ public enum ErrorCode {
     NOT_FOUND_API(HttpStatus.NOT_FOUND, "exception.not_found.api"),
 
     NOT_FOUND_USER_GROUP(HttpStatus.NOT_FOUND, "exception.not_found.user_group"),
+
+    /**
+     * 409 Conflict
+     */
+    USER_GROUP_NAME_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.user_group_name_is_already_used"),
 
     /**
      * 500 Internal Server Error

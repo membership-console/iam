@@ -8,7 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
+import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupMapper;
+import cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupRoleMapper;
+import cc.rits.membership.console.iam.infrastructure.factory.UserGroupFactory;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -20,14 +23,37 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     private final UserGroupMapper userGroupMapper;
 
+    private final UserGroupRoleMapper userGroupRoleMapper;
+
+    private final UserGroupFactory userGroupFactory;
+
     @Override
     public List<UserGroupModel> selectAll() {
         return this.userGroupMapper.selectAll().stream().map(UserGroupModel::new).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<UserGroupModel> selectById(Integer userGroupId) {
+    public Optional<UserGroupModel> selectById(final Integer userGroupId) {
         return this.userGroupMapper.selectById(userGroupId).map(UserGroupModel::new);
+    }
+
+    @Override
+    public void insert(final UserGroupModel userGroupModel) {
+        final var userGroup = this.userGroupFactory.createUserGroup(userGroupModel);
+        this.userGroupMapper.insert(userGroup);
+
+        userGroupModel.setId(userGroup.getId());
+        final var userGroupRoles = this.userGroupFactory.createUserGroupRoles(userGroupModel);
+        if (!userGroupRoles.isEmpty()) {
+            this.userGroupRoleMapper.bulkInsert(userGroupRoles);
+        }
+    }
+
+    @Override
+    public boolean existsByName(final String name) {
+        final var example = new UserGroupExample();
+        example.createCriteria().andNameEqualTo(name);
+        return this.userGroupMapper.countByExample(example) != 0;
     }
 
 }

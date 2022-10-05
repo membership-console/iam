@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupRoleMapper">
+
+    <insert id="bulkInsert">
+        INSERT INTO user_group_role(user_group_id, role_id) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userGroupId}, #{item.roleId})
+        </foreach>
+    </insert>
+
+</mapper>
