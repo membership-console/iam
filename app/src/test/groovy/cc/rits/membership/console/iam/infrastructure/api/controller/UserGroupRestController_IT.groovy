@@ -1,10 +1,13 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
+
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.exception.ErrorCode
 import cc.rits.membership.console.iam.exception.ForbiddenException
+import cc.rits.membership.console.iam.exception.NotFoundException
 import cc.rits.membership.console.iam.exception.UnauthorizedException
 import cc.rits.membership.console.iam.helper.TableHelper
+import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupResponse
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupsResponse
 import org.springframework.http.HttpStatus
 
@@ -16,6 +19,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     // API PATH
     static final String BASE_PATH = "/api/user-groups"
     static final String GET_USER_GROUPS_PATH = BASE_PATH
+    static final String GET_USER_GROUP_PATH = BASE_PATH + "/%d"
 
     def "ユーザグループリスト取得API: 正常系 IAMの閲覧者がユーザグループリストを取得"() {
         given:
@@ -62,6 +66,74 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     def "ユーザグループリスト取得API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.getRequest(GET_USER_GROUPS_PATH)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ユーザグループ取得API: 正常系 IAMの閲覧者がユーザグループを取得"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "グループA"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        when:
+        final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 1))
+        final response = this.execute(request, HttpStatus.OK, UserGroupResponse)
+
+        then:
+        response.id == 1
+        response.name == "グループA"
+        response.roles == [Role.IAM_VIEWER.id]
+    }
+
+    def "ユーザグループ取得API: 異常系 ユーザグループが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "グループA"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 2))
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
+    }
+
+    def "ユーザグループ取得API: 異常系 IAMの閲覧者以外は403エラー"() {
+        given:
+        this.login()
+
+        expect:
+        final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 1))
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザグループ取得API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 1))
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
