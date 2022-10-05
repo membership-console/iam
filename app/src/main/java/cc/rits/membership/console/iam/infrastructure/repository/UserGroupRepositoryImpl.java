@@ -56,4 +56,16 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         return this.userGroupMapper.countByExample(example) != 0;
     }
 
+    @Override
+    public boolean existsById(final Integer id) {
+        final var example = new UserGroupExample();
+        example.createCriteria().andIdEqualTo(id);
+        return this.userGroupMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public void deleteById(final Integer id) {
+        this.userGroupMapper.deleteByPrimaryKey(id);
+    }
+
 }

@@ -112,4 +112,42 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         "B"       || false
     }
 
+    def "existsById: IDからユーザグループの存在確認"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.existsById(inputId)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputId || expectedResult
+        1       || true
+        2       || false
+    }
+
+    def "deleteById: IDからユーザグループを削除"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        // @formatter:on
+
+        when:
+        this.sut.deleteById(1)
+
+        then:
+        final userGroups = sql.rows("SELECT * FROM user_group")
+        userGroups == []
+    }
+
 }

@@ -14,4 +14,6 @@ public interface UserMapper extends UserBaseMapper {
 
     List<UserWithUserGroups> selectAll();
 
+    long countByUserGroupId(final Integer userGroupId);
+
 }

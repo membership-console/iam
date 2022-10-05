@@ -48,4 +48,12 @@ public interface UserRepository {
      */
     boolean existsById(final Integer id);
 
+    /**
+     * ユーザグループIDからユーザ数を取得
+     * 
+     * @param userGroupId ユーザグループID
+     * @return ユーザ数
+     */
+    Integer countByUserGroupId(final Integer userGroupId);
+
 }

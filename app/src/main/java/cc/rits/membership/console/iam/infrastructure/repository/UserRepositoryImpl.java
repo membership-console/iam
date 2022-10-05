@@ -50,4 +50,9 @@ public class UserRepositoryImpl implements UserRepository {
         return this.userMapper.countByExample(example) != 0;
     }
 
+    @Override
+    public Integer countByUserGroupId(final Integer userGroupId) {
+        return Math.toIntExact(this.userMapper.countByUserGroupId(userGroupId));
+    }
+
 }

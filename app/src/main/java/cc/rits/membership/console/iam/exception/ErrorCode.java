@@ -29,6 +29,8 @@ public enum ErrorCode {
 
     USER_GROUP_ROLES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.user_group_roles_must_not_be_empty"),
 
+    USER_GROUP_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "exception.bad_request.user_group_cannot_be_deleted"),
+
     /**
      * 401 Unauthorized
      */

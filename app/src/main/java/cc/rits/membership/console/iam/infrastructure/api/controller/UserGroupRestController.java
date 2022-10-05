@@ -13,6 +13,7 @@ import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupRespo
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupsResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
 import cc.rits.membership.console.iam.usecase.CreateUserGroupUseCase;
+import cc.rits.membership.console.iam.usecase.DeleteUserGroupUseCase;
 import cc.rits.membership.console.iam.usecase.GetUserGroupUseCase;
 import cc.rits.membership.console.iam.usecase.GetUserGroupsUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +34,8 @@ public class UserGroupRestController {
     private final GetUserGroupUseCase getUserGroupUseCase;
 
     private final CreateUserGroupUseCase createUserGroupUseCase;
+
+    private final DeleteUserGroupUseCase deleteUserGroupUseCase;
 
     /**
      * ユーザグループリスト取得API
@@ -55,6 +58,7 @@ public class UserGroupRestController {
      * ユーザグループ取得API
      *
      * @param loginUser ログインユーザ
+     * @param userGroupId ユーザグループID
      * @return ユーザグループ
      */
     @GetMapping("/{user_group_id}")
@@ -79,6 +83,21 @@ public class UserGroupRestController {
         @RequestValidated @RequestBody final UserGroupUpsertRequest requestBody //
     ) {
         this.createUserGroupUseCase.handle(loginUser, requestBody);
+    }
+
+    /**
+     * ユーザグループ削除API
+     *
+     * @param loginUser ログインユーザ
+     * @param userGroupId ユーザグループID
+     */
+    @DeleteMapping("{user_group_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUserGroup( //
+        final UserModel loginUser, //
+        @PathVariable("user_group_id") final Integer userGroupId //
+    ) {
+        this.deleteUserGroupUseCase.handle(loginUser, userGroupId);
     }
 
 }

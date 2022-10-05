@@ -64,4 +64,12 @@
                  LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
     </select>
 
+    <select id="countByUserGroupId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+
+        FROM user
+                 LEFT JOIN r__user__user_group ON r__user__user_group.user_id = user.id
+        WHERE r__user__user_group.user_group_id = #{userGroupId}
+    </select>
+
 </mapper>
