@@ -40,6 +40,8 @@ public enum ErrorCode {
      */
     NOT_FOUND_API(HttpStatus.NOT_FOUND, "exception.not_found.api"),
 
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "exception.not_found.user"),
+
     NOT_FOUND_USER_GROUP(HttpStatus.NOT_FOUND, "exception.not_found.user_group"),
 
     /**

@@ -11,6 +11,7 @@ exception:
     user_has_no_permission: "その動作は許可されていません。"
   not_found:
     api: "APIが見つかりません。"
+    user: "ユーザが見つかりません。"
     user_group: "ユーザグループが見つかりません。"
   internal_server_error:
     unexpected_error: "予期しないエラーが発生しました。問題が解決しない場合は、管理者までご連絡ください。"

@@ -5,14 +5,12 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
+import cc.rits.membership.console.iam.usecase.DeleteUserUseCase;
 import cc.rits.membership.console.iam.usecase.GetUsersUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class UserRestController {
 
     private final GetUsersUseCase getUsersUseCase;
+
+    private final DeleteUserUseCase deleteUserUseCase;
 
     /**
      * ユーザリスト取得API
@@ -56,6 +56,21 @@ public class UserRestController {
         final UserModel loginUser //
     ) {
         return new UserResponse(loginUser);
+    }
+
+    /**
+     * ユーザ削除API
+     *
+     * @param loginUser ログインユーザ
+     * @param userId ユーザID
+     */
+    @DeleteMapping("/{user_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser( //
+        final UserModel loginUser, //
+        @PathVariable("user_id") final Integer userId //
+    ) {
+        this.deleteUserUseCase.handle(loginUser, userId);
     }
 
 }

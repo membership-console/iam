@@ -25,4 +25,19 @@ public interface UserRepository {
      */
     List<UserModel> selectAll();
 
+    /**
+     * IDからユーザを削除
+     * 
+     * @param id ユーザID
+     */
+    void deleteById(final Integer id);
+
+    /**
+     * IDからユーザの存在確認
+     * 
+     * @param id ユーザID
+     * @return 存在するか
+     */
+    boolean existsById(final Integer id);
+
 }
