@@ -25,4 +25,19 @@ public interface UserGroupRepository {
      */
     Optional<UserGroupModel> selectById(final Integer userGroupId);
 
+    /**
+     * ユーザグループを作成
+     * 
+     * @param userGroupModel ユーザグループ
+     */
+    void insert(final UserGroupModel userGroupModel);
+
+    /**
+     * ユーザグループ名の存在確認
+     * 
+     * @param name ユーザグループ名
+     * @return ユーザグループが存在するか
+     */
+    boolean existsByName(final String name);
+
 }

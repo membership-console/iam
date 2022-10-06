@@ -1,8 +1,6 @@
-package cc.rits.membership.console.iam.model
+package cc.rits.membership.console.iam.domain.model
 
 import cc.rits.membership.console.iam.AbstractSpecification
-import cc.rits.membership.console.iam.domain.model.UserGroupModel
-import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.enums.Role
 
 /**

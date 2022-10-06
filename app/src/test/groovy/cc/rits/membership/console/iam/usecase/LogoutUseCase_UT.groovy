@@ -1,6 +1,5 @@
 package cc.rits.membership.console.iam.usecase
 
-
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
