@@ -20,6 +20,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     static final String GET_USER_GROUPS_PATH = BASE_PATH
     static final String GET_USER_GROUP_PATH = BASE_PATH + "/%d"
     static final String CREATE_USER_GROUP_PATH = BASE_PATH
+    static final String DELETE_USER_GROUP_PATH = BASE_PATH + "/%d"
 
     @Shared
     UserGroupUpsertRequest userGroupUpsertRequest = UserGroupUpsertRequest.builder()
@@ -211,7 +212,6 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         RandomHelper.alphanumeric(1)   | [-1]                 || ErrorCode.INVALID_USER_GROUP_ROLES
     }
 
-
     def "ユーザグループ作成API: 異常系 IAMの管理者以外は403エラー"() {
         given:
         this.login()
@@ -224,6 +224,99 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     def "ユーザグループ作成API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.postRequest(CREATE_USER_GROUP_PATH, this.userGroupUpsertRequest)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ユーザグループ削除API: 正常系 IAMの管理者がユーザグループを削除"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "A"
+            2  | "B"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+            2             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        when:
+        final request = this.deleteRequest(String.format(DELETE_USER_GROUP_PATH, 2))
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final userGroups = sql.rows("SELECT * FROM user_group WHERE id=:id", [id: 2])
+        userGroups == []
+    }
+
+    def "ユーザグループ削除API: 異常系 ユーザグループが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_USER_GROUP_PATH, 2))
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
+    }
+
+    def "ユーザグループ削除API: 異常系 所属するユーザがいる場合は400エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_USER_GROUP_PATH, 1))
+        this.execute(request, new BadRequestException(ErrorCode.USER_GROUP_CANNOT_BE_DELETED))
+    }
+
+    def "ユーザグループ削除API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        this.login()
+
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_USER_GROUP_PATH, 1))
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザグループ削除API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_USER_GROUP_PATH, 1))
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

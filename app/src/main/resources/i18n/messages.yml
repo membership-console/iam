@@ -7,6 +7,7 @@ exception:
     invalid_user_group_name: "ユーザグループ名は1~255文字にしてください。"
     invalid_user_group_roles: "不正なロールが指定されました。"
     user_group_roles_must_not_be_empty: "ユーザグループには最低1個以上のロールを割り当てる必要があります。"
+    user_group_cannot_be_deleted: "所属人数が0人以外のユーザグループは削除できません。"
   unauthorized:
     user_not_logged_in: "ユーザはログインしていません。問題が解決しない場合は、管理者までご連絡ください。"
     incorrect_email_or_password: "メールアドレスかパスワードが間違っています。"

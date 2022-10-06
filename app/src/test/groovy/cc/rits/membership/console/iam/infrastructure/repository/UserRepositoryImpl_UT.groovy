@@ -166,4 +166,38 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         2       || false
     }
 
+    def "countByUserGroupId: ユーザグループIDからユーザ数を取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email               | password | entrance_year
+            1  | ""         | ""        | "user1@example.com" | ""       | 2000
+            2  | ""         | ""        | "user2@example.com" | ""       | 2000
+            3  | ""         | ""        | "user3@example.com" | ""       | 2000
+        }
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "A"
+            2  | "B"
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            1       | 1
+            2       | 1
+            3       | 2
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.countByUserGroupId(inputId)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputId | expectedResult
+        1       | 2
+        2       | 1
+    }
+
 }

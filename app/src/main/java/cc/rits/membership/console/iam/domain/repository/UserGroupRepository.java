@@ -40,4 +40,19 @@ public interface UserGroupRepository {
      */
     boolean existsByName(final String name);
 
+    /**
+     * IDからユーザグループの存在確認
+     * 
+     * @param id ユーザグループID
+     * @return ユーザグループが存在するか
+     */
+    boolean existsById(final Integer id);
+
+    /**
+     * IDからユーザグループを削除
+     * 
+     * @param id ユーザグループID
+     */
+    void deleteById(final Integer id);
+
 }
