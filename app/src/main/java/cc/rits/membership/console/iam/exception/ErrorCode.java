@@ -60,7 +60,9 @@ public enum ErrorCode {
     /**
      * 500 Internal Server Error
      */
-    UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "exception.internal_server_error.unexpected_error");
+    UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "exception.internal_server_error.unexpected_error"),
+
+    FAILED_TO_SEND_MAIL(HttpStatus.INTERNAL_SERVER_ERROR, "exception.internal_server_error.failed_to_send_mail");
 
     /**
      * HTTPステータスコード

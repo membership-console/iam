@@ -4,3 +4,10 @@ spring:
     username: iam
     password: iam
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+sendgrid:
+  enabled: false
+  api-key: SENDGRID_API_KEY
+  from:
+    name: Membership Console事務局
+    email: SENDGRID_EMAIL

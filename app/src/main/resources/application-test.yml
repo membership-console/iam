@@ -6,3 +6,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 1
+
+sendgrid:
+  enabled: false
+  api-key: SENDGRID_API_KEY
+  from:
+    name: Membership Console事務局
+    email: SENDGRID_EMAIL
