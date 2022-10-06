@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.infrastructure.db.entity.UserExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,18 @@ public class UserRepositoryImpl implements UserRepository {
         return this.userMapper.selectAll().stream() //
             .map(UserModel::new) //
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteById(final Integer id) {
+        this.userMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean existsById(final Integer id) {
+        final var example = new UserExample();
+        example.createCriteria().andIdEqualTo(id);
+        return this.userMapper.countByExample(example) != 0;
     }
 
 }

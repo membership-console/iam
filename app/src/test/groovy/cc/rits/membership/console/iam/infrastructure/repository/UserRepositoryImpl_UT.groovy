@@ -78,4 +78,42 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result*.email == ["user1@example.com", "user2@example.com"]
     }
 
+    def "deleteById: IDからユーザを削除"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email | password | entrance_year
+            1  | ""         | ""        | ""    | ""       | 2000
+        }
+        // @formatter:on
+
+        when:
+        this.sut.deleteById(1)
+
+        then:
+        final users = sql.rows("SELECT * FROM user")
+        users == []
+    }
+
+    def "existsById: IDからユーザの存在確認"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email | password | entrance_year
+            1  | ""         | ""        | ""    | ""       | 2000
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.existsById(inputId)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputId || expectedResult
+        1       || true
+        2       || false
+    }
+
 }
