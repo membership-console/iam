@@ -11,6 +11,7 @@ import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
 import cc.rits.membership.console.iam.usecase.DeleteUserUseCase;
+import cc.rits.membership.console.iam.usecase.GetUserUseCase;
 import cc.rits.membership.console.iam.usecase.GetUsersUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 public class UserRestController {
 
     private final GetUsersUseCase getUsersUseCase;
+
+    private final GetUserUseCase getUserUseCase;
 
     private final DeleteUserUseCase deleteUserUseCase;
 
@@ -56,6 +59,21 @@ public class UserRestController {
         final UserModel loginUser //
     ) {
         return new UserResponse(loginUser);
+    }
+
+    /**
+     * ユーザ取得API
+     *
+     * @param loginUser ログインユーザ
+     * @param userId ユーザID
+     */
+    @GetMapping("/{user_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse getUser( //
+        final UserModel loginUser, //
+        @PathVariable("user_id") final Integer userId //
+    ) {
+        return new UserResponse(this.getUserUseCase.handle(loginUser, userId));
     }
 
     /**

@@ -10,6 +10,8 @@ public interface UserMapper extends UserBaseMapper {
 
     Optional<UserWithUserGroups> selectByEmail(final String email);
 
+    Optional<UserWithUserGroups> selectById(final Integer id);
+
     List<UserWithUserGroups> selectAll();
 
 }
