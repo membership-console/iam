@@ -19,6 +19,14 @@ public interface UserRepository {
     Optional<UserModel> selectByEmail(final String email);
 
     /**
+     * IDからユーザを取得
+     * 
+     * @param id ユーザID
+     * @return ユーザ
+     */
+    Optional<UserModel> selectById(final Integer id);
+
+    /**
      * ユーザリストを全件取得
      * 
      * @return ユーザリスト

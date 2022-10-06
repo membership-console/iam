@@ -27,6 +27,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<UserModel> selectById(final Integer id) {
+        return this.userMapper.selectById(id).map(UserModel::new);
+    }
+
+    @Override
     public List<UserModel> selectAll() {
         return this.userMapper.selectAll().stream() //
             .map(UserModel::new) //
