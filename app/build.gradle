@@ -109,6 +109,9 @@ dependencies {
     // mysql
     implementation "mysql:mysql-connector-java:8.0.29"
 
+    // SendGrid
+    implementation "com.sendgrid:sendgrid-java:4.9.3"
+
     // swagger
     implementation "io.springfox:springfox-boot-starter:3.0.0"
     implementation "org.springdoc:springdoc-openapi-ui:1.6.9"
