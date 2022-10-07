@@ -1,6 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.repository
 
 import cc.rits.membership.console.iam.enums.Role
+import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -198,6 +199,25 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         inputId | expectedResult
         1       | 2
         2       | 1
+    }
+
+    def "updatePasswordById: IDからパスワードを更新"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email              | password | entrance_year
+            1  | "山田"     | "太郎"    | "user@example.com" | ""       | 2000
+        }
+        // @formatter:on
+
+        final newPassword = RandomHelper.alphanumeric(10)
+
+        when:
+        this.sut.updatePasswordById(1, newPassword)
+
+        then:
+        final updatedUser = sql.firstRow("SELECT password FROM user")
+        updatedUser.password == newPassword
     }
 
 }

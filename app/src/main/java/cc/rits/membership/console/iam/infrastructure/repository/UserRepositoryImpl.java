@@ -55,4 +55,9 @@ public class UserRepositoryImpl implements UserRepository {
         return Math.toIntExact(this.userMapper.countByUserGroupId(userGroupId));
     }
 
+    @Override
+    public void updatePasswordById(final Integer id, final String password) {
+        this.userMapper.updatePasswordById(id, password);
+    }
+
 }

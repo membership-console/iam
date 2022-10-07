@@ -31,6 +31,8 @@ public enum ErrorCode {
 
     USER_GROUP_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "exception.bad_request.user_group_cannot_be_deleted"),
 
+    INVALID_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_old_password"),
+
     /**
      * 401 Unauthorized
      */

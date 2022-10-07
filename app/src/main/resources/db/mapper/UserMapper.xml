@@ -72,4 +72,10 @@
         WHERE r__user__user_group.user_group_id = #{userGroupId}
     </select>
 
+    <update id="updatePasswordById">
+        UPDATE user
+        SET password = #{password}
+        WHERE id = #{id}
+    </update>
+
 </mapper>

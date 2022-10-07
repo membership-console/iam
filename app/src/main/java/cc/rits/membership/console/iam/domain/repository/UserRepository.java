@@ -56,4 +56,12 @@ public interface UserRepository {
      */
     Integer countByUserGroupId(final Integer userGroupId);
 
+    /**
+     * パスワードを更新
+     * 
+     * @param id ユーザID
+     * @param password パスワード
+     */
+    void updatePasswordById(final Integer id, final String password);
+
 }
