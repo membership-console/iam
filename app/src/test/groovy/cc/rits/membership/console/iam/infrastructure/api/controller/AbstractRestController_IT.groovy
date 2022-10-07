@@ -7,6 +7,7 @@ import cc.rits.membership.console.iam.exception.BaseException
 import cc.rits.membership.console.iam.helper.JsonConvertHelper
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.infrastructure.api.response.ErrorResponse
+import cc.rits.membership.console.iam.property.AuthProperty
 import cc.rits.membership.console.iam.util.AuthUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
@@ -48,6 +49,9 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
 
     @Autowired
     protected AuthUtil authUtil
+
+    @Autowired
+    protected AuthProperty authProperty
 
     @Shared
     protected MockHttpSession session = new MockHttpSession()

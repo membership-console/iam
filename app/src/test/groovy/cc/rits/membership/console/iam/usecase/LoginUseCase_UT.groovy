@@ -23,6 +23,7 @@ class LoginUseCase_UT extends AbstractUseCase_UT {
         then:
         noExceptionThrown()
         1 * this.authenticationProvider.authenticate(_) >> new UsernamePasswordAuthenticationToken(null, null, null)
+        1 * this.httpSession.setMaxInactiveInterval(_)
         1 * this.httpServletRequest.changeSessionId()
     }
 

@@ -31,6 +31,8 @@ class AuthRestController_IT extends AbstractRestController_IT {
 
         then:
         !this.session.isInvalid()
+        // セッションの有効時間が設定されている
+        session.getMaxInactiveInterval() == this.authProperty.sessionTimeout
         // セッションIDが変更されていることを確認 (セッションジャック対策)
         oldSessionId != this.session.getId()
     }
