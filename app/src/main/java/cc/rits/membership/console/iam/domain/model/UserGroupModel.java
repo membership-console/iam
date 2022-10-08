@@ -1,5 +1,6 @@
 package cc.rits.membership.console.iam.domain.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserGroupModel {
+public class UserGroupModel implements Serializable {
 
     /**
      * ユーザグループID
