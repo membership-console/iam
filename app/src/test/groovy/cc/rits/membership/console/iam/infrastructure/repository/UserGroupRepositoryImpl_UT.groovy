@@ -2,6 +2,7 @@ package cc.rits.membership.console.iam.infrastructure.repository
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel
 import cc.rits.membership.console.iam.enums.Role
+import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -88,7 +89,7 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
 
         final createdUserGroupRoles = sql.rows("SELECT * FROM user_group_role")
         createdUserGroupRoles*.user_group_id == [createdUserGroup.id, createdUserGroup.id]
-        createdUserGroupRoles*.role_id == [Role.IAM_VIEWER.id, Role.IAM_ADMIN.id]
+        createdUserGroupRoles*.role_id == userGroup.roles*.id
     }
 
     def "existsByName: ユーザグループ名の存在確認"() {
@@ -148,6 +149,37 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         then:
         final userGroups = sql.rows("SELECT * FROM user_group")
         userGroups == []
+    }
+
+    def "update: ユーザグループを更新"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        // @formatter:on
+
+        final userGroup = UserGroupModel.builder()
+            .id(1)
+            .name(RandomHelper.alphanumeric(10))
+            .roles([Role.PURCHASE_REQUEST_VIEWER, Role.PURCHASE_REQUEST_ADMIN])
+            .build()
+
+        when:
+        sut.update(userGroup)
+
+        then:
+        final updatedUserGroup = sql.firstRow("SELECT * FROM user_group WHERE id=:id", [id: userGroup.id])
+        updatedUserGroup.name == userGroup.name
+
+        final createdUserGroupRoles = sql.rows("SELECT * FROM user_group_role")
+        createdUserGroupRoles*.user_group_id == [updatedUserGroup.id, updatedUserGroup.id]
+        createdUserGroupRoles*.role_id == userGroup.roles*.id
     }
 
 }

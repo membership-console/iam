@@ -8,7 +8,6 @@ import cc.rits.membership.console.iam.exception.ForbiddenException
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.infrastructure.api.request.UserGroupUpsertRequest
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Shared
 
 /**
  * CreateUserGroupUseCaseの単体テスト
@@ -17,13 +16,6 @@ class CreateUserGroupUseCase_UT extends AbstractUseCase_UT {
 
     @Autowired
     CreateUserGroupUseCase sut
-
-    @Shared
-    UserGroupUpsertRequest requestBody = RandomHelper.mock(UserGroupUpsertRequest)
-
-    def setup() {
-        this.requestBody.roles = [Role.IAM_VIEWER.id, Role.IAM_ADMIN.id]
-    }
 
     def "handle: IAMの管理者がユーザグループを作成"() {
         given:
