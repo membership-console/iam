@@ -5,9 +5,13 @@ import cc.rits.membership.console.iam.exception.*
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest
+import cc.rits.membership.console.iam.infrastructure.api.request.UserCreateRequest
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse
 import org.springframework.http.HttpStatus
+import spock.lang.Shared
+
+import java.time.LocalDateTime
 
 /**
  * UserRestControllerの統合テスト
@@ -19,8 +23,23 @@ class UserRestController_IT extends AbstractRestController_IT {
     static final String GET_USERS_PATH = BASE_PATH
     static final String GET_LOGIN_USER_PATH = BASE_PATH + "/me"
     static final String GET_USER_PATH = BASE_PATH + "/%d"
+    static final String CREATE_USER_PATH = BASE_PATH
     static final String DELETE_USER_PATH = BASE_PATH + "/%d"
     static final String UPDATE_LOGIN_USER_PASSWORD = BASE_PATH + "/me/password"
+
+    @Shared
+    UserCreateRequest userCreateRequest
+
+    def setup() {
+        this.userCreateRequest = UserCreateRequest.builder()
+            .firstName(RandomHelper.alphanumeric(10))
+            .lastName(RandomHelper.alphanumeric(10))
+            .email(RandomHelper.email())
+            .password(RandomHelper.password())
+            .entranceYear(LocalDateTime.now().year)
+            .userGroupIds([1])
+            .build()
+    }
 
     def "ユーザリスト取得API: 正常系 IAMの閲覧者がユーザリストを取得"() {
         given:
@@ -180,6 +199,175 @@ class UserRestController_IT extends AbstractRestController_IT {
     def "ユーザ取得API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.getRequest(String.format(GET_USER_PATH, 1))
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ユーザ作成API: 正常系 IAMの管理者がユーザを作成"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "1"
+            2  | "2"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userCreateRequest.userGroupIds = [1, 2]
+
+        when:
+        final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
+        this.execute(request, HttpStatus.CREATED)
+
+        then:
+        final createdUser = sql.firstRow("SELECT * FROM user WHERE id != :id", [id: user.id])
+        createdUser.first_name == this.userCreateRequest.firstName
+        createdUser.last_name == this.userCreateRequest.lastName
+        createdUser.email == this.userCreateRequest.email
+        createdUser.entrance_year == this.userCreateRequest.entranceYear
+        this.authUtil.isMatchPasswordAndHash(this.userCreateRequest.password, createdUser.password as String)
+
+        final created_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group WHERE user_id = :user_id", [user_id: createdUser.id])
+        created_r__user__user_group_list*.user_id == this.userCreateRequest.userGroupIds.collect { createdUser.id }
+        created_r__user__user_group_list*.user_group_id == this.userCreateRequest.userGroupIds
+    }
+
+    def "ユーザ作成API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "1"
+            2  | "2"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザ作成API: 異常系 ユーザグループが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userCreateRequest.userGroupIds = [0]
+
+        expect:
+        final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
+    }
+
+    def "ユーザ作成API: 異常系 メールアドレスが既に使われている場合は400エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userCreateRequest.email = user.email
+        this.userCreateRequest.userGroupIds = [1]
+
+        expect:
+        final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
+        this.execute(request, new ConflictException(ErrorCode.EMAIL_IS_ALREADY_USED))
+    }
+
+    def "ユーザ作成API: 異常系 リクエストボディのバリデーション"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        final requestBody = UserCreateRequest.builder()
+            .firstName(inputFirstName)
+            .lastName(inputLastName)
+            .email(inputEmail)
+            .password(inputPassword)
+            .entranceYear(inputEntranceYear)
+            .userGroupIds(inputUserGroupIds)
+            .build()
+
+        expect:
+        final request = this.postRequest(CREATE_USER_PATH, requestBody)
+        this.execute(request, new BadRequestException(expectedErrorCode))
+
+        where:
+        inputFirstName                 | inputLastName                  | inputEmail           | inputPassword           | inputEntranceYear            | inputUserGroupIds || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_EMAIL
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | ""                      | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_PASSWORD_LENGTH
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 33                | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_PASSWORD_LENGTH
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 8                 | LocalDateTime.now().year     | [1]               || ErrorCode.PASSWORD_IS_TOO_SIMPLE
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year + 1 | [1]               || ErrorCode.INVALID_USER_ENTRANCE_YEAR
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.USER_GROUPS_MUST_NOT_BE_EMPTY
+    }
+
+    def "ユーザ作成API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
