@@ -9,6 +9,11 @@ exception:
     user_group_roles_must_not_be_empty: "ユーザグループには最低1個以上のロールを割り当てる必要があります。"
     user_group_cannot_be_deleted: "所属人数が0人以外のユーザグループは削除できません。"
     invalid_old_password: "現在のパスワードが間違えています。"
+    invalid_user_first_name: "姓は1~255文字にしてください。"
+    invalid_user_last_name: "名は1~255文字にしてください。"
+    invalid_user_email: "不正なメールアドレスです。"
+    invalid_user_entrance_year: "不正な入学年度は登録できません。"
+    user_groups_must_not_be_empty: "ユーザには1個以上のユーザグループを割り当てる必要があります。"
   unauthorized:
     user_not_logged_in: "ユーザはログインしていません。問題が解決しない場合は、管理者までご連絡ください。"
     incorrect_email_or_password: "メールアドレスかパスワードが間違っています。"
@@ -20,6 +25,7 @@ exception:
     user_group: "ユーザグループが見つかりません。"
   conflict:
     user_group_name_is_already_used: "そのユーザグループ名は既に使われています。"
+    email_is_already_used: "そのメールアドレスは既に使われています。"
   internal_server_error:
     unexpected_error: "予期しないエラーが発生しました。問題が解決しない場合は、管理者までご連絡ください。"
     failed_to_send_mail: "メールの送信に失敗しました。しばらく時間を置いてから再度お試しください。"

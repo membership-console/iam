@@ -33,6 +33,16 @@ public enum ErrorCode {
 
     INVALID_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_old_password"),
 
+    INVALID_USER_FIRST_NAME(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_first_name"),
+
+    INVALID_USER_LAST_NAME(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_last_name"),
+
+    INVALID_USER_EMAIL(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_email"),
+
+    INVALID_USER_ENTRANCE_YEAR(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_user_entrance_year"),
+
+    USER_GROUPS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.user_groups_must_not_be_empty"),
+
     /**
      * 401 Unauthorized
      */
@@ -58,6 +68,8 @@ public enum ErrorCode {
      * 409 Conflict
      */
     USER_GROUP_NAME_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.user_group_name_is_already_used"),
+
+    EMAIL_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.email_is_already_used"),
 
     /**
      * 500 Internal Server Error

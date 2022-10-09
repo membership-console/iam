@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest;
+import cc.rits.membership.console.iam.infrastructure.api.request.UserCreateRequest;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.DeleteUserUseCase;
-import cc.rits.membership.console.iam.usecase.GetUserUseCase;
-import cc.rits.membership.console.iam.usecase.GetUsersUseCase;
-import cc.rits.membership.console.iam.usecase.UpdateLoginUserPasswordUseCase;
+import cc.rits.membership.console.iam.usecase.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +30,8 @@ public class UserRestController {
     private final GetUsersUseCase getUsersUseCase;
 
     private final GetUserUseCase getUserUseCase;
+
+    private final CreateUserUseCase createUserUseCase;
 
     private final DeleteUserUseCase deleteUserUseCase;
 
@@ -79,6 +79,21 @@ public class UserRestController {
         @PathVariable("user_id") final Integer userId //
     ) {
         return new UserResponse(this.getUserUseCase.handle(loginUser, userId));
+    }
+
+    /**
+     * ユーザ作成API
+     * 
+     * @param loginUser ログインユーザ
+     * @param requestBody ユーザ作成リクエスト
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser( //
+        final UserModel loginUser, //
+        @RequestValidated @RequestBody final UserCreateRequest requestBody //
+    ) {
+        this.createUserUseCase.handle(loginUser, requestBody);
     }
 
     /**

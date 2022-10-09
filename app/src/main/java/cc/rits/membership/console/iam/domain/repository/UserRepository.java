@@ -34,6 +34,13 @@ public interface UserRepository {
     List<UserModel> selectAll();
 
     /**
+     * ユーザを作成
+     * 
+     * @param userModel ユーザ
+     */
+    void insert(final UserModel userModel);
+
+    /**
      * IDからユーザを削除
      * 
      * @param id ユーザID
@@ -47,6 +54,14 @@ public interface UserRepository {
      * @return 存在するか
      */
     boolean existsById(final Integer id);
+
+    /**
+     * メールアドレスからユーザの存在確認
+     * 
+     * @param email メールアドレス
+     * @return 存在するか
+     */
+    boolean existsByEmail(final String email);
 
     /**
      * ユーザグループIDからユーザ数を取得

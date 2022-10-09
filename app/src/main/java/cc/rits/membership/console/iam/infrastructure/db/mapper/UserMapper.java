@@ -18,4 +18,6 @@ public interface UserMapper extends UserBaseMapper {
 
     void updatePasswordById(final Integer id, final String password);
 
+    void addUserToUserGroups(final Integer userId, final List<Integer> userGroupIds);
+
 }

@@ -10,6 +10,8 @@ public interface UserGroupMapper extends UserGroupBaseMapper {
 
     List<UserGroupWithRoles> selectAll();
 
-    Optional<UserGroupWithRoles> selectById(final Integer userGroupId);
+    Optional<UserGroupWithRoles> selectById(final Integer id);
+
+    List<UserGroupWithRoles> selectByIds(final List<Integer> ids);
 
 }

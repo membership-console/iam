@@ -1,5 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.repository
 
+import cc.rits.membership.console.iam.domain.model.UserGroupModel
+import cc.rits.membership.console.iam.domain.model.UserModel
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
@@ -129,6 +131,44 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result*.email == ["user1@example.com", "user2@example.com"]
     }
 
+    def "insert: ユーザを作成"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "1"
+            2  | "2"
+            3  | "3"
+        }
+        // @formatter:on
+
+        final user = UserModel.builder()
+            .firstName(RandomHelper.alphanumeric(10))
+            .lastName(RandomHelper.alphanumeric(10))
+            .email(RandomHelper.email())
+            .password(RandomHelper.alphanumeric(10))
+            .entranceYear(2000)
+            .userGroup(UserGroupModel.builder().id(1).build())
+            .userGroup(UserGroupModel.builder().id(2).build())
+            .build()
+
+        when:
+        this.sut.insert(user)
+
+        then:
+        final createdUser = sql.firstRow("SELECT * FROM user")
+        createdUser.first_name == user.firstName
+        createdUser.last_name == user.lastName
+        createdUser.email == user.email
+        createdUser.password == user.password
+        createdUser.entrance_year == user.entranceYear
+
+        final created_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
+        created_r__user__user_group_list*.user_id == user.userGroups.collect { createdUser.id }
+        created_r__user__user_group_list*.user_group_id == user.userGroups*.id
+    }
+
+
     def "deleteById: IDからユーザを削除"() {
         given:
         // @formatter:off
@@ -165,6 +205,27 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         inputId || expectedResult
         1       || true
         2       || false
+    }
+
+    def "existsByEmail: メールアドレスからユーザの存在確認"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email           | password | entrance_year
+            1  | ""         | ""        | "1@example.com" | ""       | 2000
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.existsByEmail(inputEmail)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputEmail      || expectedResult
+        "1@example.com" || true
+        "2@example.com" || false
     }
 
     def "countByUserGroupId: ユーザグループIDからユーザ数を取得"() {

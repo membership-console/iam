@@ -34,8 +34,15 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public Optional<UserGroupModel> selectById(final Integer userGroupId) {
-        return this.userGroupMapper.selectById(userGroupId).map(UserGroupModel::new);
+    public Optional<UserGroupModel> selectById(final Integer id) {
+        return this.userGroupMapper.selectById(id).map(UserGroupModel::new);
+    }
+
+    @Override
+    public List<UserGroupModel> selectByIds(final List<Integer> ids) {
+        return this.userGroupMapper.selectByIds(ids).stream() //
+            .map(UserGroupModel::new) //
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -62,6 +69,17 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         final var example = new UserGroupExample();
         example.createCriteria().andIdEqualTo(id);
         return this.userGroupMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public boolean existsByIds(final List<Integer> ids) {
+        if (ids.isEmpty()) {
+            return true;
+        }
+
+        final var example = new UserGroupExample();
+        example.createCriteria().andIdIn(ids);
+        return this.userGroupMapper.countByExample(example) == ids.size();
     }
 
     @Override

@@ -78,4 +78,12 @@
         WHERE id = #{id}
     </update>
 
+    <insert id="addUserToUserGroups">
+        INSERT INTO r__user__user_group (user_id, user_group_id)
+        VALUES
+        <foreach item="userGroupId" collection="userGroupIds" separator=",">
+            (#{userId}, #{userGroupId})
+        </foreach>
+    </insert>
+
 </mapper>
