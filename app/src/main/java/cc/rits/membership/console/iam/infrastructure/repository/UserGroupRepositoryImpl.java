@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupExample;
+import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRoleExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupMapper;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupRoleMapper;
 import cc.rits.membership.console.iam.infrastructure.factory.UserGroupFactory;
@@ -66,6 +67,23 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     @Override
     public void deleteById(final Integer id) {
         this.userGroupMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void update(UserGroupModel userGroupModel) {
+        final var userGroup = this.userGroupFactory.createUserGroup(userGroupModel);
+        this.userGroupMapper.updateByPrimaryKey(userGroup);
+
+        // 既存のロールリストを削除
+        final var userGroupRoleExample = new UserGroupRoleExample();;
+        userGroupRoleExample.createCriteria().andUserGroupIdEqualTo(userGroupModel.getId());
+        this.userGroupRoleMapper.deleteByExample(userGroupRoleExample);
+
+        // 新規ロールリストを追加
+        final var userGroupRoles = this.userGroupFactory.createUserGroupRoles(userGroupModel);
+        if (!userGroupRoles.isEmpty()) {
+            this.userGroupRoleMapper.bulkInsert(userGroupRoles);
+        }
     }
 
 }

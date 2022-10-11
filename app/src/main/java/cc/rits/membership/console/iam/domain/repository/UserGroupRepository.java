@@ -55,4 +55,11 @@ public interface UserGroupRepository {
      */
     void deleteById(final Integer id);
 
+    /**
+     * ユーザグループを更新
+     * 
+     * @param userGroupModel ユーザグループ
+     */
+    void update(final UserGroupModel userGroupModel);
+
 }

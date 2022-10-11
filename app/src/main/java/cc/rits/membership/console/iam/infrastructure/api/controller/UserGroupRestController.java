@@ -12,10 +12,7 @@ import cc.rits.membership.console.iam.infrastructure.api.request.UserGroupUpsert
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupsResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.CreateUserGroupUseCase;
-import cc.rits.membership.console.iam.usecase.DeleteUserGroupUseCase;
-import cc.rits.membership.console.iam.usecase.GetUserGroupUseCase;
-import cc.rits.membership.console.iam.usecase.GetUserGroupsUseCase;
+import cc.rits.membership.console.iam.usecase.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +31,8 @@ public class UserGroupRestController {
     private final GetUserGroupUseCase getUserGroupUseCase;
 
     private final CreateUserGroupUseCase createUserGroupUseCase;
+
+    private final UpdateUserGroupUseCase updateUserGroupUseCase;
 
     private final DeleteUserGroupUseCase deleteUserGroupUseCase;
 
@@ -83,6 +82,22 @@ public class UserGroupRestController {
         @RequestValidated @RequestBody final UserGroupUpsertRequest requestBody //
     ) {
         this.createUserGroupUseCase.handle(loginUser, requestBody);
+    }
+
+    /**
+     * ユーザグループ更新API
+     *
+     * @param loginUser ログインユーザ
+     * @param requestBody ユーザグループ更新リクエスト
+     */
+    @PutMapping("{user_group_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateUserGroup( //
+        final UserModel loginUser, //
+        @PathVariable("user_group_id") final Integer userGroupId, //
+        @RequestValidated @RequestBody final UserGroupUpsertRequest requestBody //
+    ) {
+        this.updateUserGroupUseCase.handle(loginUser, userGroupId, requestBody);
     }
 
     /**

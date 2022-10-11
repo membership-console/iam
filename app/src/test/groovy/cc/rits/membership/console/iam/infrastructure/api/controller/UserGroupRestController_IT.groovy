@@ -20,6 +20,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     static final String GET_USER_GROUPS_PATH = BASE_PATH
     static final String GET_USER_GROUP_PATH = BASE_PATH + "/%d"
     static final String CREATE_USER_GROUP_PATH = BASE_PATH
+    static final String UPDATE_USER_GROUP_PATH = BASE_PATH + "/%d"
     static final String DELETE_USER_GROUP_PATH = BASE_PATH + "/%d"
 
     @Shared
@@ -224,6 +225,117 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     def "ユーザグループ作成API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.postRequest(CREATE_USER_GROUP_PATH, this.userGroupUpsertRequest)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ユーザグループ更新API: 正常系 IAMの管理者がユーザグループを更新"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        final requestBody = UserGroupUpsertRequest.builder()
+            .name(RandomHelper.alphanumeric(10))
+            .roles([Role.PURCHASE_REQUEST_VIEWER.id, Role.PURCHASE_REQUEST_ADMIN.id])
+            .build()
+
+        when:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), requestBody)
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final updatedUserGroup = sql.firstRow("SELECT * FROM user_group WHERE id=1")
+        updatedUserGroup.name == requestBody.name
+
+        final updatedUserGroupRoles = sql.rows("SELECT * FROM user_group_role WHERE user_group_id=1")
+        updatedUserGroupRoles*.role_id == requestBody.roles
+    }
+
+    def "ユーザグループ更新API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        this.login()
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), this.userGroupUpsertRequest)
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザグループ更新API: 異常系 ユーザグループが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 0), this.userGroupUpsertRequest)
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
+    }
+
+    def "ユーザグループ更新API: 異常系 リクエストボディのバリデーション"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        final requestBody = UserGroupUpsertRequest.builder()
+            .name(inputName)
+            .roles(inputRoles)
+            .build()
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), requestBody)
+        this.execute(request, new BadRequestException(expectedErrorCode))
+
+        where:
+        inputName                      | inputRoles           || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(101) | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(1)   | []                   || ErrorCode.USER_GROUP_ROLES_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(1)   | [-1]                 || ErrorCode.INVALID_USER_GROUP_ROLES
+    }
+
+    def "ユーザグループ更新API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), this.userGroupUpsertRequest)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
