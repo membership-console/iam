@@ -16,4 +16,6 @@ public interface UserMapper extends UserBaseMapper {
 
     long countByUserGroupId(final Integer userGroupId);
 
+    void updatePasswordById(final Integer id, final String password);
+
 }

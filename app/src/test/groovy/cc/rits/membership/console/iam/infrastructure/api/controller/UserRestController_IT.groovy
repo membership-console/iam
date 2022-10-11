@@ -1,11 +1,10 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.enums.Role
-import cc.rits.membership.console.iam.exception.ErrorCode
-import cc.rits.membership.console.iam.exception.ForbiddenException
-import cc.rits.membership.console.iam.exception.NotFoundException
-import cc.rits.membership.console.iam.exception.UnauthorizedException
+import cc.rits.membership.console.iam.exception.*
+import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
+import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse
 import org.springframework.http.HttpStatus
@@ -21,6 +20,7 @@ class UserRestController_IT extends AbstractRestController_IT {
     static final String GET_LOGIN_USER_PATH = BASE_PATH + "/me"
     static final String GET_USER_PATH = BASE_PATH + "/%d"
     static final String DELETE_USER_PATH = BASE_PATH + "/%d"
+    static final String UPDATE_LOGIN_USER_PASSWORD = BASE_PATH + "/me/password"
 
     def "ユーザリスト取得API: 正常系 IAMの閲覧者がユーザリストを取得"() {
         given:
@@ -262,6 +262,75 @@ class UserRestController_IT extends AbstractRestController_IT {
     def "ユーザ削除API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.deleteRequest(String.format(DELETE_USER_PATH, 1))
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ログインユーザパスワード更新API: 正常系 ログインユーザのパスワードを更新する"() {
+        given:
+        final user = this.login()
+
+        final requestBody = LoginUserPasswordUpdateRequest.builder()
+            .oldPassword(user.password)
+            .newPassword(RandomHelper.password())
+            .build()
+
+        when:
+        final request = this.putRequest(UPDATE_LOGIN_USER_PASSWORD, requestBody)
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final updatedUser = sql.firstRow("SELECT password FROM user")
+        this.authUtil.isMatchPasswordAndHash(requestBody.newPassword, updatedUser.password as String)
+    }
+
+    def "ログインユーザパスワード更新API: 現在のパスワードが間違えている場合は400エラー"() {
+        given:
+        final user = login()
+
+        final requestBody = LoginUserPasswordUpdateRequest.builder()
+            .oldPassword(user.password + "...")
+            .newPassword(RandomHelper.password())
+            .build()
+
+        expect:
+        final request = this.putRequest(UPDATE_LOGIN_USER_PASSWORD, requestBody)
+        this.execute(request, new BadRequestException(ErrorCode.INVALID_OLD_PASSWORD))
+    }
+
+    def "ログインユーザパスワード更新API: 異常系 リクエストボディのバリデーション"() {
+        given:
+        final user = login()
+
+        final requestBody = LoginUserPasswordUpdateRequest.builder()
+            .oldPassword(user.password)
+            .newPassword(newPassword)
+            .build()
+
+        expect:
+        final request = this.putRequest(UPDATE_LOGIN_USER_PASSWORD, requestBody)
+        this.execute(request, new BadRequestException(expectedErrorCode))
+
+        where:
+        newPassword || expectedErrorCode
+        // 8文字未満
+        "b9Fj5QY"   || ErrorCode.INVALID_PASSWORD_LENGTH
+        // 32文字より多い
+        "." * 33    || ErrorCode.INVALID_PASSWORD_LENGTH
+        // 大文字・小文字・数字のいずれかが欠如している
+        "bFjQYVPg"  || ErrorCode.PASSWORD_IS_TOO_SIMPLE
+        "b9fj5qyv"  || ErrorCode.PASSWORD_IS_TOO_SIMPLE
+        "B9FJ5QYVP" || ErrorCode.PASSWORD_IS_TOO_SIMPLE
+    }
+
+    def "ログインユーザパスワード更新API: 異常系 ログインしていない場合は401エラー"() {
+        given:
+        final requestBody = LoginUserPasswordUpdateRequest.builder()
+            .oldPassword(RandomHelper.password())
+            .newPassword(RandomHelper.password())
+            .build()
+
+        expect:
+        final request = this.putRequest(UPDATE_LOGIN_USER_PASSWORD, requestBody)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

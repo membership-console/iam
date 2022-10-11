@@ -8,11 +8,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
+import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
+import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
 import cc.rits.membership.console.iam.usecase.DeleteUserUseCase;
 import cc.rits.membership.console.iam.usecase.GetUserUseCase;
 import cc.rits.membership.console.iam.usecase.GetUsersUseCase;
+import cc.rits.membership.console.iam.usecase.UpdateLoginUserPasswordUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +34,8 @@ public class UserRestController {
     private final GetUserUseCase getUserUseCase;
 
     private final DeleteUserUseCase deleteUserUseCase;
+
+    private final UpdateLoginUserPasswordUseCase updateLoginUserPasswordUseCase;
 
     /**
      * ユーザリスト取得API
@@ -89,6 +94,21 @@ public class UserRestController {
         @PathVariable("user_id") final Integer userId //
     ) {
         this.deleteUserUseCase.handle(loginUser, userId);
+    }
+
+    /**
+     * ログインユーザパスワード更新API
+     *
+     * @param loginUser ログインユーザ
+     * @param requestBody ログインユーザパスワード更新リクエスト
+     */
+    @PutMapping("/me/password")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateLoginUserPassword( //
+        final UserModel loginUser, //
+        @RequestValidated @RequestBody final LoginUserPasswordUpdateRequest requestBody //
+    ) {
+        this.updateLoginUserPasswordUseCase.handle(loginUser, requestBody);
     }
 
 }
