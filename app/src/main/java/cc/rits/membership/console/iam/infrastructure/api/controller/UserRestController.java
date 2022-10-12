@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest;
 import cc.rits.membership.console.iam.infrastructure.api.request.UserCreateRequest;
+import cc.rits.membership.console.iam.infrastructure.api.request.UserUpdateRequest;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
@@ -32,6 +33,8 @@ public class UserRestController {
     private final GetUserUseCase getUserUseCase;
 
     private final CreateUserUseCase createUserUseCase;
+
+    private final UpdateUserUseCase updateUserUseCase;
 
     private final DeleteUserUseCase deleteUserUseCase;
 
@@ -94,6 +97,23 @@ public class UserRestController {
         @RequestValidated @RequestBody final UserCreateRequest requestBody //
     ) {
         this.createUserUseCase.handle(loginUser, requestBody);
+    }
+
+    /**
+     * ユーザ更新API
+     * 
+     * @param loginUser ログインユーザ
+     * @param userId ユーザID
+     * @param requestBody ユーザ更新リクエスト
+     */
+    @PutMapping("/{user_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateUser( //
+        final UserModel loginUser, //
+        @PathVariable("user_id") final Integer userId, //
+        @RequestValidated @RequestBody final UserUpdateRequest requestBody //
+    ) {
+        this.updateUserUseCase.handle(loginUser, userId, requestBody);
     }
 
     /**

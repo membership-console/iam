@@ -168,6 +168,52 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         created_r__user__user_group_list*.user_group_id == user.userGroups*.id
     }
 
+    def "update: ユーザを更新"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email | password | entrance_year
+            1  | ""         | ""        | ""    | ""       | 2000
+        }
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "所属解除するグループ"
+            2  | "継続して所属するグループ"
+            3  | "新規所属するグループ"
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            1       | 1
+            1       | 2
+        }
+        // @formatter:on
+
+        final user = UserModel.builder()
+            .id(1)
+            .firstName(RandomHelper.alphanumeric(10))
+            .lastName(RandomHelper.alphanumeric(10))
+            .email(RandomHelper.email())
+            .password(RandomHelper.password())
+            .entranceYear(2222)
+            .userGroup(UserGroupModel.builder().id(2).build())
+            .userGroup(UserGroupModel.builder().id(3).build())
+            .build()
+
+        when:
+        this.sut.update(user)
+
+        then:
+        final updatedUser = sql.firstRow("SELECT * FROM user")
+        updatedUser.first_name == user.firstName
+        updatedUser.last_name == user.lastName
+        updatedUser.email == user.email
+        updatedUser.password == user.password
+        updatedUser.entrance_year == user.entranceYear
+
+        final updated_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
+        updated_r__user__user_group_list*.user_id == user.userGroups.collect { updatedUser.id }
+        updated_r__user__user_group_list*.user_group_id == user.userGroups*.id
+    }
 
     def "deleteById: IDからユーザを削除"() {
         given:
