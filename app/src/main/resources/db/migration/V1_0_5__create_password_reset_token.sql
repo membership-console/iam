@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `password_reset_token`
     `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `fk_password_reset_token_user_id_idx` (`user_id` ASC) VISIBLE,
+    UNIQUE INDEX `token_UNIQUE` (`token` ASC) VISIBLE,
     CONSTRAINT `fk_password_reset_token_user_id`
         FOREIGN KEY (`user_id`)
             REFERENCES `user` (`id`)
