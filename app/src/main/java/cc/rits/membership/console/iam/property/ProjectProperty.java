@@ -23,4 +23,9 @@ public class ProjectProperty {
      */
     String version;
 
+    /**
+     * パスワードリセットURL
+     */
+    String passwordResetUrl;
+
 }

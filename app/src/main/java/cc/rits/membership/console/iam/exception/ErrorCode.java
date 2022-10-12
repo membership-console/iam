@@ -43,6 +43,8 @@ public enum ErrorCode {
 
     USER_GROUPS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.user_groups_must_not_be_empty"),
 
+    REQUESTED_EMAIL_IS_NOT_EXISTS(HttpStatus.BAD_REQUEST, "exception.bad_request.requested_email_is_exists"),
+
     /**
      * 401 Unauthorized
      */

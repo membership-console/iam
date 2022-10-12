@@ -5,6 +5,9 @@ spring:
     password: iam
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+project:
+  password-reset-url: http://localhost:4200/password_reset
+
 sendgrid:
   enabled: false
   api-key: SENDGRID_API_KEY
