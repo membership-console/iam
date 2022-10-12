@@ -45,6 +45,8 @@ public enum ErrorCode {
 
     REQUESTED_EMAIL_IS_NOT_EXISTS(HttpStatus.BAD_REQUEST, "exception.bad_request.requested_email_is_exists"),
 
+    INVALID_PASSWORD_RESET_TOKEN(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_password_reset_token"),
+
     /**
      * 401 Unauthorized
      */

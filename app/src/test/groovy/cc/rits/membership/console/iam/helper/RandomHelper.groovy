@@ -58,4 +58,13 @@ class RandomHelper {
         return encoder.encode(RandomStringUtils.randomAlphabetic(10).getBytes())
     }
 
+    /**
+     * UUIDを生成
+     *
+     * @return UUID
+     */
+    static String uuid() {
+        return UUID.randomUUID().toString()
+    }
+
 }

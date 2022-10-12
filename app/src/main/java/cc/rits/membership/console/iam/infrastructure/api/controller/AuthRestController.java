@@ -6,11 +6,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginRequest;
+import cc.rits.membership.console.iam.infrastructure.api.request.PasswordResetRequest;
 import cc.rits.membership.console.iam.infrastructure.api.request.RequestPasswordResetRequest;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
 import cc.rits.membership.console.iam.usecase.LoginUseCase;
 import cc.rits.membership.console.iam.usecase.LogoutUseCase;
 import cc.rits.membership.console.iam.usecase.RequestPasswordResetUseCase;
+import cc.rits.membership.console.iam.usecase.ResetPasswordUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,8 @@ public class AuthRestController {
     private final LogoutUseCase logoutUseCase;
 
     private final RequestPasswordResetUseCase requestPasswordResetUseCase;
+
+    private final ResetPasswordUseCase resetPasswordUseCase;
 
     /**
      * ログインAPI
@@ -63,6 +67,19 @@ public class AuthRestController {
         @RequestValidated @RequestBody final RequestPasswordResetRequest requestBody //
     ) {
         this.requestPasswordResetUseCase.handle(requestBody);
+    }
+
+    /**
+     * パスワードリセットAPI
+     * 
+     * @param requestBody パスワードリセットリクエスト
+     */
+    @PostMapping("password_reset")
+    @ResponseStatus(HttpStatus.OK)
+    public void resetPassword( //
+        @RequestValidated @RequestBody final PasswordResetRequest requestBody //
+    ) {
+        this.resetPasswordUseCase.handle(requestBody);
     }
 
 }

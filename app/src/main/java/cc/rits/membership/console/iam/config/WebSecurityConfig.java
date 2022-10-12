@@ -47,7 +47,7 @@ public class WebSecurityConfig {
 
         // アクセス許可
         http.authorizeRequests() //
-            .antMatchers("/api/health", "/api/login", "/api/request_password_reset").permitAll() //
+            .antMatchers("/api/health", "/api/login", "/api/request_password_reset", "/api/password_reset").permitAll() //
             .antMatchers("/api/**").hasRole("USER") //
             .antMatchers("/**").permitAll() //
             .anyRequest().authenticated() //

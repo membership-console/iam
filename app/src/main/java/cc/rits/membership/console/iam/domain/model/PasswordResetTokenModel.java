@@ -50,4 +50,13 @@ public class PasswordResetTokenModel implements Serializable {
         this.expireAt = passwordResetToken.getExpireAt();
     }
 
+    /**
+     * パスワードリセットトークンが有効かチェック
+     * 
+     * @return チェック結果
+     */
+    public boolean isValid() {
+        return this.expireAt.isAfter(LocalDateTime.now());
+    }
+
 }
