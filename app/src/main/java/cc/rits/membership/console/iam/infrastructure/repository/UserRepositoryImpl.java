@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
+import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.domain.repository.UserRepository;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserMapper;
+import cc.rits.membership.console.iam.infrastructure.factory.UserFactory;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserMapper userMapper;
+
+    private final UserFactory userFactory;
 
     @Override
     public Optional<UserModel> selectByEmail(final String email) {
@@ -39,6 +43,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void insert(final UserModel userModel) {
+        final var user = this.userFactory.createUser(userModel);
+        this.userMapper.insert(user);
+
+        // ユーザグループに配属
+        final var userGroupIds = userModel.getUserGroups().stream() //
+            .map(UserGroupModel::getId) //
+            .collect(Collectors.toList());
+        this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+    }
+
+    @Override
     public void deleteById(final Integer id) {
         this.userMapper.deleteByPrimaryKey(id);
     }
@@ -47,6 +63,13 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsById(final Integer id) {
         final var example = new UserExample();
         example.createCriteria().andIdEqualTo(id);
+        return this.userMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public boolean existsByEmail(final String email) {
+        final var example = new UserExample();
+        example.createCriteria().andEmailEqualTo(email);
         return this.userMapper.countByExample(example) != 0;
     }
 

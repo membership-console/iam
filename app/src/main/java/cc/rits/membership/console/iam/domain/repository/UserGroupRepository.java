@@ -20,10 +20,18 @@ public interface UserGroupRepository {
     /**
      * IDからユーザグループを取得
      * 
-     * @param userGroupId ユーザグループID
+     * @param id ユーザグループID
      * @return ユーザグループ
      */
-    Optional<UserGroupModel> selectById(final Integer userGroupId);
+    Optional<UserGroupModel> selectById(final Integer id);
+
+    /**
+     * IDリストからユーザグループリストを取得
+     * 
+     * @param ids ユーザグループIDリスト
+     * @return ユーザグループリスト
+     */
+    List<UserGroupModel> selectByIds(final List<Integer> ids);
 
     /**
      * ユーザグループを作成
@@ -47,6 +55,14 @@ public interface UserGroupRepository {
      * @return ユーザグループが存在するか
      */
     boolean existsById(final Integer id);
+
+    /**
+     * IDリストが全て存在することを確認
+     * 
+     * @param ids ユーザグループIDリスト
+     * @return 全IDが存在するか
+     */
+    boolean existsByIds(final List<Integer> ids);
 
     /**
      * IDからユーザグループを削除

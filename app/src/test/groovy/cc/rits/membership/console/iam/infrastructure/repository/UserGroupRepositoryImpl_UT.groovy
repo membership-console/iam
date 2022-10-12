@@ -73,6 +73,32 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         result.isEmpty()
     }
 
+    def "selectByIds: IDリストからユーザグループリストを取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "グループA"
+            2  | "グループB"
+            3  | "グループC"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+            2             | Role.IAM_ADMIN.id
+            3             | Role.PURCHASE_REQUEST_ADMIN.id
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.selectByIds([1, 2])
+
+        then:
+        result*.id == [1, 2]
+        result*.name == ["グループA", "グループB"]
+        result*.roles == [[Role.IAM_VIEWER], [Role.IAM_ADMIN]]
+    }
+
     def "insert: ユーザグループを作成"() {
         given:
         final userGroup = UserGroupModel.builder()
@@ -132,6 +158,31 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         inputId || expectedResult
         1       || true
         2       || false
+    }
+
+    def "existsByIds: IDリストが全て存在することを確認"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "1"
+            2  | "2"
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.existsByIds(inputIds)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputIds || expectedResult
+        []       || true
+        [1]      || true
+        [1, 2]   || true
+        [1, 3]   || false
+        [3]      || false
     }
 
     def "deleteById: IDからユーザグループを削除"() {

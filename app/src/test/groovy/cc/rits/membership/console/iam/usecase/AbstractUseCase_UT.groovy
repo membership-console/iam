@@ -5,6 +5,7 @@ import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider
 import cc.rits.membership.console.iam.domain.repository.UserGroupRepository
 import cc.rits.membership.console.iam.domain.repository.UserRepository
 import cc.rits.membership.console.iam.domain.service.UserGroupService
+import cc.rits.membership.console.iam.domain.service.UserService
 import cc.rits.membership.console.iam.util.AuthUtil
 import org.spockframework.spring.SpringBean
 
@@ -24,6 +25,9 @@ abstract class AbstractUseCase_UT extends AbstractSpecification {
 
     @SpringBean
     HttpServletRequest httpServletRequest = Mock()
+
+    @SpringBean
+    UserService userService = Mock()
 
     @SpringBean
     UserGroupService userGroupService = Mock()
