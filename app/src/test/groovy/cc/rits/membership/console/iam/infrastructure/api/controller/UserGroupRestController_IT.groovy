@@ -213,6 +213,33 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         RandomHelper.alphanumeric(1)   | [-1]                 || ErrorCode.INVALID_USER_GROUP_ROLES
     }
 
+    def "ユーザグループ作成API: 異常系 ユーザグループ名が既に使われている場合は409エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "A"
+            2  | "B"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userGroupUpsertRequest.name = "B"
+
+        expect:
+        final request = this.postRequest(CREATE_USER_GROUP_PATH, this.userGroupUpsertRequest)
+        this.execute(request, new ConflictException(ErrorCode.USER_GROUP_NAME_IS_ALREADY_USED))
+    }
+
     def "ユーザグループ作成API: 異常系 IAMの管理者以外は403エラー"() {
         given:
         this.login()
@@ -235,7 +262,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         // @formatter:off
         TableHelper.insert sql, "user_group", {
             id | name
-            1  | ""
+            1  | "A"
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
@@ -248,7 +275,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         // @formatter:on
 
         final requestBody = UserGroupUpsertRequest.builder()
-            .name(RandomHelper.alphanumeric(10))
+            .name(inputName)
             .roles([Role.PURCHASE_REQUEST_VIEWER.id, Role.PURCHASE_REQUEST_ADMIN.id])
             .build()
 
@@ -262,6 +289,9 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
 
         final updatedUserGroupRoles = sql.rows("SELECT * FROM user_group_role WHERE user_group_id=1")
         updatedUserGroupRoles*.role_id == requestBody.roles
+
+        where:
+        inputName << ["A", "B"]
     }
 
     def "ユーザグループ更新API: 異常系 IAMの管理者以外は403エラー"() {
@@ -271,6 +301,33 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         expect:
         final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), this.userGroupUpsertRequest)
         this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザグループ更新API: 異常系 ユーザグループ名が既に使われている場合は409エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "A"
+            2  | "B"
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userGroupUpsertRequest.name = "B"
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_GROUP_PATH, 1), this.userGroupUpsertRequest)
+        this.execute(request, new ConflictException(ErrorCode.USER_GROUP_NAME_IS_ALREADY_USED))
     }
 
     def "ユーザグループ更新API: 異常系 ユーザグループが存在しない場合は404エラー"() {
