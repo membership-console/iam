@@ -6,6 +6,7 @@ import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import cc.rits.membership.console.iam.infrastructure.api.request.LoginUserPasswordUpdateRequest
 import cc.rits.membership.console.iam.infrastructure.api.request.UserCreateRequest
+import cc.rits.membership.console.iam.infrastructure.api.request.UserUpdateRequest
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse
 import org.springframework.http.HttpStatus
@@ -24,11 +25,15 @@ class UserRestController_IT extends AbstractRestController_IT {
     static final String GET_LOGIN_USER_PATH = BASE_PATH + "/me"
     static final String GET_USER_PATH = BASE_PATH + "/%d"
     static final String CREATE_USER_PATH = BASE_PATH
+    static final String UPDATE_USER_PATH = BASE_PATH + "/%d"
     static final String DELETE_USER_PATH = BASE_PATH + "/%d"
     static final String UPDATE_LOGIN_USER_PASSWORD = BASE_PATH + "/me/password"
 
     @Shared
     UserCreateRequest userCreateRequest
+
+    @Shared
+    UserUpdateRequest userUpdateRequest
 
     def setup() {
         this.userCreateRequest = UserCreateRequest.builder()
@@ -36,6 +41,14 @@ class UserRestController_IT extends AbstractRestController_IT {
             .lastName(RandomHelper.alphanumeric(10))
             .email(RandomHelper.email())
             .password(RandomHelper.password())
+            .entranceYear(LocalDateTime.now().year)
+            .userGroupIds([1])
+            .build()
+
+        this.userUpdateRequest = UserUpdateRequest.builder()
+            .firstName(RandomHelper.alphanumeric(10))
+            .lastName(RandomHelper.alphanumeric(10))
+            .email(RandomHelper.email())
             .entranceYear(LocalDateTime.now().year)
             .userGroupIds([1])
             .build()
@@ -292,7 +305,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
     }
 
-    def "ユーザ作成API: 異常系 メールアドレスが既に使われている場合は400エラー"() {
+    def "ユーザ作成API: 異常系 メールアドレスが既に使われている場合は409エラー"() {
         given:
         final user = this.login()
 
@@ -368,6 +381,183 @@ class UserRestController_IT extends AbstractRestController_IT {
     def "ユーザ作成API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "ユーザ更新API: 正常系 IAMの管理者がユーザを更新"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | "所属解除するグループ"
+            2  | "継続して所属するグループ"
+            3  | "新規所属するグループ"
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            1       | 1
+            1       | 2
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        // @formatter:on
+
+        this.userUpdateRequest.email = inputEmail
+        this.userUpdateRequest.userGroupIds = [2, 3]
+
+        when:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), this.userUpdateRequest)
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final updatedUser = sql.firstRow("SELECT * FROM user")
+        updatedUser.first_name == this.userUpdateRequest.firstName
+        updatedUser.last_name == this.userUpdateRequest.lastName
+        updatedUser.email == this.userUpdateRequest.email
+        updatedUser.entrance_year == this.userUpdateRequest.entranceYear
+
+        final updated_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
+        updated_r__user__user_group_list*.user_id == this.userUpdateRequest.userGroupIds.collect { updatedUser.id }
+        updated_r__user__user_group_list*.user_group_id == this.userUpdateRequest.userGroupIds
+
+        where:
+        inputEmail << [LOGIN_USER_EMAIL, "updated" + LOGIN_USER_EMAIL]
+    }
+
+    def "ユーザ更新API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), this.userUpdateRequest)
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "ユーザ更新API: 異常系 ユーザ、もしくはユーザグループが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userUpdateRequest.userGroupIds = inputUserGroupIds
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, inputUserId), this.userUpdateRequest)
+        this.execute(request, new NotFoundException(expectedErrorCode))
+
+        where:
+        inputUserId | inputUserGroupIds || expectedErrorCode
+        0           | [1]               || ErrorCode.NOT_FOUND_USER
+        1           | [0]               || ErrorCode.NOT_FOUND_USER_GROUP
+    }
+
+    def "ユーザ更新API: 異常系 メールアドレスが既に使われている場合は409エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email               | password | entrance_year
+            2  | ""         | ""        | "user2@example.com" | ""       | 2000
+        }
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        this.userUpdateRequest.email = "user2@example.com"
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), this.userUpdateRequest)
+        this.execute(request, new ConflictException(ErrorCode.EMAIL_IS_ALREADY_USED))
+    }
+
+    def "ユーザ更新API: 異常系 リクエストボディのバリデーション"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        final requestBody = UserUpdateRequest.builder()
+            .firstName(inputFirstName)
+            .lastName(inputLastName)
+            .email(inputEmail)
+            .entranceYear(inputEntranceYear)
+            .userGroupIds(inputUserGroupIds)
+            .build()
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), requestBody)
+        this.execute(request, new BadRequestException(expectedErrorCode))
+
+        where:
+        inputFirstName                 | inputLastName                  | inputEmail           | inputEntranceYear            | inputUserGroupIds || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_EMAIL
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year + 1 | [1]               || ErrorCode.INVALID_USER_ENTRANCE_YEAR
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.USER_GROUPS_MUST_NOT_BE_EMPTY
+    }
+
+    def "ユーザ更新API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.putRequest(String.format(UPDATE_USER_PATH, 1), this.userUpdateRequest)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

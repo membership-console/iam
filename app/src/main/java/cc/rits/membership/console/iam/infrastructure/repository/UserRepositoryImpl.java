@@ -55,6 +55,19 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void update(final UserModel userModel) {
+        final var user = this.userFactory.createUser(userModel);
+        this.userMapper.updateByPrimaryKey(user);
+
+        // 既存のユーザグループ配属情報を削除し、新しいユーザグループリストに再配属する
+        this.userMapper.deleteUserToUserGroups(user.getId());
+        final var userGroupIds = userModel.getUserGroups().stream() //
+            .map(UserGroupModel::getId) //
+            .collect(Collectors.toList());
+        this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+    }
+
+    @Override
     public void deleteById(final Integer id) {
         this.userMapper.deleteByPrimaryKey(id);
     }

@@ -41,6 +41,13 @@ public interface UserRepository {
     void insert(final UserModel userModel);
 
     /**
+     * ユーザを更新
+     *
+     * @param userModel ユーザ
+     */
+    void update(final UserModel userModel);
+
+    /**
      * IDからユーザを削除
      * 
      * @param id ユーザID

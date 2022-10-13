@@ -20,4 +20,6 @@ public interface UserMapper extends UserBaseMapper {
 
     void addUserToUserGroups(final Integer userId, final List<Integer> userGroupIds);
 
+    void deleteUserToUserGroups(final Integer id);
+
 }

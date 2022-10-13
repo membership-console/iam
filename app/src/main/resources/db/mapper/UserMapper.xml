@@ -86,4 +86,10 @@
         </foreach>
     </insert>
 
+    <delete id="deleteUserToUserGroups">
+        DELETE
+        FROM r__user__user_group
+        WHERE user_id = #{id}
+    </delete>
+
 </mapper>
