@@ -16,4 +16,19 @@ public interface ClientRepository {
      */
     List<ClientModel> selectAll();
 
+    /**
+     * クライアントを作成
+     *
+     * @param clientModel クライアント
+     */
+    void insert(final ClientModel clientModel);
+
+    /**
+     * クライアント名の存在確認
+     *
+     * @param name クライアント名
+     * @return クライアントが存在するか
+     */
+    boolean existsByName(final String name);
+
 }

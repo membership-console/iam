@@ -6,7 +6,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
@@ -18,12 +17,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -53,21 +48,8 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        // TODO: これは消す
-        final var registeredClient = RegisteredClient.withId(UUID.randomUUID().toString()) //
-            .clientId("client1") //
-            .clientSecret(this.passwordEncoder.encode("password")) //
-            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS) //
-            .scope("user") //
-            .scope("me") //
-            .tokenSettings(this.tokenSettings()) //
-            .build();
-
-        final var registeredClientRepository = new JdbcRegisteredClientRepository(this.jdbcTemplate);
-        // registeredClientRepository.save(registeredClient);
-
-        return registeredClientRepository;
+    public JdbcRegisteredClientRepository jdbcRegisteredClientRepository() {
+        return new JdbcRegisteredClientRepository(this.jdbcTemplate);
     }
 
     @Bean
@@ -97,12 +79,6 @@ public class AuthorizationServerConfig {
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
-    }
-
-    private TokenSettings tokenSettings() {
-        return TokenSettings.builder() //
-            .accessTokenTimeToLive(Duration.ofSeconds(900)) //
-            .build();
     }
 
 }

@@ -39,6 +39,11 @@ public class ClientModel implements Serializable {
     String clientId;
 
     /**
+     * クライアントシークレット
+     */
+    String clientSecret;
+
+    /**
      * スコープリスト
      */
     @Singular
@@ -48,6 +53,7 @@ public class ClientModel implements Serializable {
         this.id = oauth2RegisteredClient.getId();
         this.name = oauth2RegisteredClient.getClientName();
         this.clientId = oauth2RegisteredClient.getClientId();
+        this.clientSecret = oauth2RegisteredClient.getClientSecret();
         this.scopes = Arrays.stream(oauth2RegisteredClient.getScopes().split(",")) //
             .map(Scope::find) //
             .filter(Optional::isPresent) //

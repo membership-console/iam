@@ -3,6 +3,10 @@ package cc.rits.membership.console.iam.infrastructure.repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
@@ -20,13 +24,34 @@ public class ClientRepositoryImpl implements ClientRepository {
 
     private final OAuth2RegisteredClientMapper oAuth2RegisteredClientMapper;
 
+    private final JdbcRegisteredClientRepository registeredClientRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public List<ClientModel> selectAll() {
-        // TODO: UTを書く
         final var example = new Oauth2RegisteredClientExample();
         return this.oAuth2RegisteredClientMapper.selectByExample(example).stream() //
             .map(ClientModel::new) //
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public void insert(final ClientModel clientModel) {
+        final var registeredClientBuilder = RegisteredClient.withId(clientModel.getId());
+        registeredClientBuilder.clientName(clientModel.getName());
+        registeredClientBuilder.clientId(clientModel.getClientId());
+        registeredClientBuilder.clientSecret(this.passwordEncoder.encode(clientModel.getClientSecret()));
+        registeredClientBuilder.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS);
+        clientModel.getScopes().forEach(scope -> registeredClientBuilder.scope(scope.getName()));
+        this.registeredClientRepository.save(registeredClientBuilder.build());
+    }
+
+    @Override
+    public boolean existsByName(final String name) {
+        final var example = new Oauth2RegisteredClientExample();
+        example.createCriteria().andClientNameEqualTo(name);
+        return this.oAuth2RegisteredClientMapper.selectByExample(example).size() != 0;
     }
 
 }
