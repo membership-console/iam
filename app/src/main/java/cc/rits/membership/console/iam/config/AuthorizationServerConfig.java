@@ -65,7 +65,7 @@ public class AuthorizationServerConfig {
             .build();
 
         final var registeredClientRepository = new JdbcRegisteredClientRepository(this.jdbcTemplate);
-        registeredClientRepository.save(registeredClient);
+        // registeredClientRepository.save(registeredClient);
 
         return registeredClientRepository;
     }

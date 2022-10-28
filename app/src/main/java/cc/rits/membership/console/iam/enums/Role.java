@@ -24,14 +24,14 @@ public enum Role {
     IAM_ADMIN(1, Service.IAM, RoleLevel.ADMIN),
 
     /**
-     * 購入申請の閲覧者
+     * 会計システムの閲覧者
      */
-    PURCHASE_REQUEST_VIEWER(2, Service.PURCHASE_REQUEST, RoleLevel.VIEWER),
+    PURCHASE_REQUEST_VIEWER(2, Service.PAYMASTER, RoleLevel.VIEWER),
 
     /**
-     * 購入申請の管理者
+     * 会計システムの管理者
      */
-    PURCHASE_REQUEST_ADMIN(3, Service.PURCHASE_REQUEST, RoleLevel.ADMIN);
+    PURCHASE_REQUEST_ADMIN(3, Service.PAYMASTER, RoleLevel.ADMIN);
 
     /**
      * ロールID

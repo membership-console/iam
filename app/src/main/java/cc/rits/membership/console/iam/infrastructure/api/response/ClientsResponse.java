@@ -9,18 +9,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * OAuthクライアントリストレスポンス
+ * クライアントリストレスポンス
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OAuthClientsResponse {
+public class ClientsResponse {
 
     /**
-     * OAuthクライアントリストレスポンス
+     * クライアントリストレスポンス
      */
     @Schema(required = true)
-    List<OAuthClientsResponse> clients;
+    List<ClientResponse> clients;
 
 }
