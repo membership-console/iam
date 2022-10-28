@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * サービス
+ * 連携サービス
  */
 @Getter
 @AllArgsConstructor
@@ -16,9 +16,9 @@ public enum Service {
     IAM(0),
 
     /**
-     * 購入申請
+     * 会計システム
      */
-    PURCHASE_REQUEST(1);
+    PAYMASTER(1);
 
     /**
      * サービスID

@@ -2,6 +2,7 @@ package cc.rits.membership.console.iam.usecase
 
 import cc.rits.membership.console.iam.AbstractSpecification
 import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider
+import cc.rits.membership.console.iam.domain.repository.ClientRepository
 import cc.rits.membership.console.iam.domain.repository.PasswordResetTokenRepository
 import cc.rits.membership.console.iam.domain.repository.UserGroupRepository
 import cc.rits.membership.console.iam.domain.repository.UserRepository
@@ -42,6 +43,9 @@ abstract class AbstractUseCase_UT extends AbstractSpecification {
 
     @SpringBean
     PasswordResetTokenRepository passwordResetTokenRepository = Mock()
+
+    @SpringBean
+    ClientRepository clientRepository = Mock()
 
     @SpringBean
     AuthUtil authUtil = Mock()
