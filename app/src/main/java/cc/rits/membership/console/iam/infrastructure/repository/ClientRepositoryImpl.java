@@ -51,7 +51,19 @@ public class ClientRepositoryImpl implements ClientRepository {
     public boolean existsByName(final String name) {
         final var example = new Oauth2RegisteredClientExample();
         example.createCriteria().andClientNameEqualTo(name);
-        return this.oAuth2RegisteredClientMapper.selectByExample(example).size() != 0;
+        return this.oAuth2RegisteredClientMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public boolean existsById(final String id) {
+        final var example = new Oauth2RegisteredClientExample();
+        example.createCriteria().andIdEqualTo(id);
+        return this.oAuth2RegisteredClientMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public void deleteById(final String id) {
+        this.oAuth2RegisteredClientMapper.deleteByPrimaryKey(id);
     }
 
 }

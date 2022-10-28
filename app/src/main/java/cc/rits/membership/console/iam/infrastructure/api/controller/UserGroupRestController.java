@@ -12,7 +12,7 @@ import cc.rits.membership.console.iam.infrastructure.api.request.UserGroupUpsert
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UserGroupsResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.*;
+import cc.rits.membership.console.iam.usecase.user_group.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 

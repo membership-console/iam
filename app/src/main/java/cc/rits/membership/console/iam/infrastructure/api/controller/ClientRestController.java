@@ -13,8 +13,9 @@ import cc.rits.membership.console.iam.infrastructure.api.response.ClientCredenti
 import cc.rits.membership.console.iam.infrastructure.api.response.ClientResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.ClientsResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.CreateClientUseCase;
-import cc.rits.membership.console.iam.usecase.GetClientsUseCase;
+import cc.rits.membership.console.iam.usecase.client.CreateClientUseCase;
+import cc.rits.membership.console.iam.usecase.client.DeleteClientUseCase;
+import cc.rits.membership.console.iam.usecase.client.GetClientsUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,8 @@ public class ClientRestController {
     private final GetClientsUseCase getClientsUseCase;
 
     private final CreateClientUseCase createClientUseCase;
+
+    private final DeleteClientUseCase deleteClientUseCase;
 
     /**
      * クライアントリスト取得API
@@ -94,7 +97,7 @@ public class ClientRestController {
         final UserModel loginUser, //
         @PathVariable("id") final String id //
     ) {
-        // TODO: クライアント削除APIを実装
+        this.deleteClientUseCase.handle(loginUser, id);
     }
 
 }

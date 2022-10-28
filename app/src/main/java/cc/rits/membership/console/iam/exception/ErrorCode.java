@@ -74,10 +74,14 @@ public enum ErrorCode {
 
     NOT_FOUND_USER_GROUP(HttpStatus.NOT_FOUND, "exception.not_found.user_group"),
 
+    NOT_FOUND_CLIENT(HttpStatus.NOT_FOUND, "exception.not_found.client"),
+
     /**
      * 409 Conflict
      */
     USER_GROUP_NAME_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.user_group_name_is_already_used"),
+
+    CLIENT_NAME_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.client_name_is_already_used"),
 
     EMAIL_IS_ALREADY_USED(HttpStatus.CONFLICT, "exception.conflict.email_is_already_used"),
 

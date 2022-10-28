@@ -23,7 +23,7 @@ public class ClientService {
      */
     public void checkIsNameAlreadyUsed(final String name) throws ConflictException {
         if (this.clientRepository.existsByName(name)) {
-            throw new ConflictException(ErrorCode.USER_GROUP_NAME_IS_ALREADY_USED);
+            throw new ConflictException(ErrorCode.CLIENT_NAME_IS_ALREADY_USED);
         }
     }
 
