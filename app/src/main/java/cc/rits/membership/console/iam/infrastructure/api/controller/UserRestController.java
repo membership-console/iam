@@ -14,7 +14,7 @@ import cc.rits.membership.console.iam.infrastructure.api.request.UserUpdateReque
 import cc.rits.membership.console.iam.infrastructure.api.response.UserResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.UsersResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.*;
+import cc.rits.membership.console.iam.usecase.user.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 

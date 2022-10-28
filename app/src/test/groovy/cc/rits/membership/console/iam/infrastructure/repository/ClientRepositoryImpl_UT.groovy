@@ -58,8 +58,8 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         given:
         // @formatter:off
         TableHelper.insert sql, "oauth2_registered_client", {
-            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
-            "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
         }
         // @formatter:on
 
@@ -73,6 +73,45 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         inputName || expectedResult
         "A"       || true
         "B"       || false
+    }
+
+    def "existsById: IDの存在確認"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.existsById(inputId)
+
+        then:
+        result == expectedResult
+
+        where:
+        inputId || expectedResult
+        "A"     || true
+        "B"     || false
+    }
+
+    def "deleteById: IDのからクライアントを削除"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+            "B" | "B"       | "B"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        when:
+        this.sut.deleteById("A")
+
+        then:
+        final clients = sql.rows("SELECT * FROM oauth2_registered_client")
+        clients*.id == ["B"]
     }
 
 }

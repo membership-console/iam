@@ -2,10 +2,7 @@ package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.enums.Role
 import cc.rits.membership.console.iam.enums.Scope
-import cc.rits.membership.console.iam.exception.BadRequestException
-import cc.rits.membership.console.iam.exception.ErrorCode
-import cc.rits.membership.console.iam.exception.ForbiddenException
-import cc.rits.membership.console.iam.exception.UnauthorizedException
+import cc.rits.membership.console.iam.exception.*
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import cc.rits.membership.console.iam.infrastructure.api.request.ClientUpsertRequest
@@ -22,6 +19,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
     static final String BASE_PATH = "/api/clients"
     static final String GET_CLIENTS_PATH = BASE_PATH
     static final String CREATE_CLIENTS_PATH = BASE_PATH
+    static final String DELETE_CLIENTS_PATH = BASE_PATH + "/%s"
 
     @Shared
     ClientUpsertRequest clientUpsertRequest = ClientUpsertRequest.builder()
@@ -172,9 +170,124 @@ class ClientRestController_IT extends AbstractRestController_IT {
         RandomHelper.alphanumeric(1)   | [""]                   || ErrorCode.INVALID_CLIENT_SCOPES
     }
 
+    def "ユーザグループ作成API: 異常系 クライアント名が既に使われている場合は409エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name                   | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | this.clientUpsertRequest.name | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.postRequest(CREATE_CLIENTS_PATH, this.clientUpsertRequest)
+        this.execute(request, new ConflictException(ErrorCode.CLIENT_NAME_IS_ALREADY_USED))
+    }
+
     def "クライアント作成API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.postRequest(CREATE_CLIENTS_PATH, this.clientUpsertRequest)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "クライアント削除API: 正常系 IAMの管理者がクライアントを削除"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+            "B" | "B"       | "B"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        when:
+        final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final clients = sql.rows("SELECT * FROM oauth2_registered_client")
+        clients*.id == ["B"]
+    }
+
+    def "クライアント削除API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "クライアント削除API: 異常系 クライアントが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_CLIENT))
+    }
+
+    def "クライアント削除API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

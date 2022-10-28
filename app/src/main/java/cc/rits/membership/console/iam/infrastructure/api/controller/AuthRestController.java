@@ -9,10 +9,10 @@ import cc.rits.membership.console.iam.infrastructure.api.request.LoginRequest;
 import cc.rits.membership.console.iam.infrastructure.api.request.PasswordResetRequest;
 import cc.rits.membership.console.iam.infrastructure.api.request.RequestPasswordResetRequest;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.LoginUseCase;
-import cc.rits.membership.console.iam.usecase.LogoutUseCase;
-import cc.rits.membership.console.iam.usecase.RequestPasswordResetUseCase;
-import cc.rits.membership.console.iam.usecase.ResetPasswordUseCase;
+import cc.rits.membership.console.iam.usecase.user.LoginUseCase;
+import cc.rits.membership.console.iam.usecase.user.LogoutUseCase;
+import cc.rits.membership.console.iam.usecase.user.RequestPasswordResetUseCase;
+import cc.rits.membership.console.iam.usecase.user.ResetPasswordUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 

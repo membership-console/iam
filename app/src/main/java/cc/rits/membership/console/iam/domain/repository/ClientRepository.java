@@ -31,4 +31,19 @@ public interface ClientRepository {
      */
     boolean existsByName(final String name);
 
+    /**
+     * IDの存在確認
+     *
+     * @param id ID
+     * @return クライアントが存在するか
+     */
+    boolean existsById(final String id);
+
+    /**
+     * IDからクライアントを削除
+     * 
+     * @param id ID
+     */
+    void deleteById(final String id);
+
 }
