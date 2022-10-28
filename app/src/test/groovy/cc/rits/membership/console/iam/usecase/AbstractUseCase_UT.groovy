@@ -6,6 +6,7 @@ import cc.rits.membership.console.iam.domain.repository.ClientRepository
 import cc.rits.membership.console.iam.domain.repository.PasswordResetTokenRepository
 import cc.rits.membership.console.iam.domain.repository.UserGroupRepository
 import cc.rits.membership.console.iam.domain.repository.UserRepository
+import cc.rits.membership.console.iam.domain.service.ClientService
 import cc.rits.membership.console.iam.domain.service.UserGroupService
 import cc.rits.membership.console.iam.domain.service.UserService
 import cc.rits.membership.console.iam.util.AuthUtil
@@ -34,6 +35,9 @@ abstract class AbstractUseCase_UT extends AbstractSpecification {
 
     @SpringBean
     UserGroupService userGroupService = Mock()
+
+    @SpringBean
+    ClientService clientService = Mock()
 
     @SpringBean
     UserRepository userRepository = Mock()

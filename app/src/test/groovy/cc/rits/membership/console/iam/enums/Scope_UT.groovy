@@ -15,11 +15,10 @@ class Scope_UT extends AbstractSpecification {
         result == expectedResult
 
         where:
-        name                       || expectedResult
-        Scope.USER_READ.getName()  || Optional.of(Scope.USER_READ)
-        Scope.USER_WRITE.getName() || Optional.of(Scope.USER_WRITE)
-        Scope.EMAIL.getName()      || Optional.of(Scope.EMAIL)
-        ""                         || Optional.empty()
+        name                      || expectedResult
+        Scope.USER_READ.getName() || Optional.of(Scope.USER_READ)
+        Scope.EMAIL.getName()     || Optional.of(Scope.EMAIL)
+        ""                        || Optional.empty()
     }
 
 }

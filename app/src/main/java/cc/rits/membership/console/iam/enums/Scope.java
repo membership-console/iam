@@ -19,11 +19,6 @@ public enum Scope {
     USER_READ("user:read"),
 
     /**
-     * ユーザ情報の書き込み権限
-     */
-    USER_WRITE("user:write"),
-
-    /**
      * メールの送信権限
      */
     EMAIL("email");

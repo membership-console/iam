@@ -47,6 +47,12 @@ public enum ErrorCode {
 
     INVALID_PASSWORD_RESET_TOKEN(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_password_reset_token"),
 
+    INVALID_CLIENT_NAME(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_client_name"),
+
+    INVALID_CLIENT_SCOPES(HttpStatus.BAD_REQUEST, "exception.bad_request.invalid_client_scopes"),
+
+    CLIENT_SCOPES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.client_scopes_must_not_be_empty"),
+
     /**
      * 401 Unauthorized
      */

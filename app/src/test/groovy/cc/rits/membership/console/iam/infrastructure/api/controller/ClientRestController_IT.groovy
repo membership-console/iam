@@ -37,7 +37,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
-            "B" | "B"       | "B"         | [Scope.USER_WRITE.name].join(",")                  | ""            | ""                            | ""                        | ""              | ""
+            "B" | "B"       | "B"         | [Scope.USER_READ.name].join(",")                  | ""            | ""                            | ""                        | ""              | ""
         }
         // @formatter:on
 
@@ -51,7 +51,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
         response.clients*.id == ["A", "B"]
         response.clients*.clientId == ["A", "B"]
         response.clients*.name == ["A", "B"]
-        response.clients*.scopes == [[Scope.USER_READ.name, Scope.EMAIL.name], [Scope.USER_WRITE.name]]
+        response.clients*.scopes == [[Scope.USER_READ.name, Scope.EMAIL.name], [Scope.USER_READ.name]]
     }
 
     def "クライアントリスト取得API: 正常系 IAMの閲覧者以外は403エラー"() {
