@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.enums.Scope;
 import cc.rits.membership.console.iam.infrastructure.db.entity.Oauth2RegisteredClientExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.OAuth2RegisteredClientMapper;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,15 @@ public class ClientRepositoryImpl implements ClientRepository {
         registeredClientBuilder.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS);
         clientModel.getScopes().forEach(scope -> registeredClientBuilder.scope(scope.getName()));
         this.registeredClientRepository.save(registeredClientBuilder.build());
+    }
+
+    @Override
+    public void updateNameAndScopes(final ClientModel clientModel) {
+        final var scopes = clientModel.getScopes().stream() //
+            .map(Scope::getName) //
+            .collect(Collectors.toList());
+        this.oAuth2RegisteredClientMapper.updateClientNameAndScopesById(clientModel.getId(), clientModel.getName(),
+            String.join(",", scopes));
     }
 
     @Override

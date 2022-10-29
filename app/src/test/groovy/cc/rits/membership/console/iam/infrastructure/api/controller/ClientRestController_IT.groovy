@@ -13,7 +13,8 @@ import org.springframework.http.HttpStatus
 import spock.lang.Shared
 
 /**
- * ClientRestControllerの統合テスト*/
+ * ClientRestControllerの統合テスト
+ s*/
 class ClientRestController_IT extends AbstractRestController_IT {
 
     // API PATH
@@ -21,6 +22,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
     static final String GET_CLIENTS_PATH = BASE_PATH
     static final String GET_CLIENT_PATH = BASE_PATH + "/%s"
     static final String CREATE_CLIENTS_PATH = BASE_PATH
+    static final String UPDATE_CLIENTS_PATH = BASE_PATH + "/%s"
     static final String DELETE_CLIENTS_PATH = BASE_PATH + "/%s"
 
     @Shared
@@ -49,7 +51,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
-            "B" | "B"       | "B"         | [Scope.USER_READ.name].join(",")                  | ""            | ""                            | ""                        | ""              | ""
+            "B" | "B"       | "B"         | [Scope.USER_READ.name].join(",")                   | ""            | ""                            | ""                        | ""              | ""
         }
         // @formatter:on
 
@@ -247,7 +249,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
         RandomHelper.alphanumeric(1)   | [""]                   || ErrorCode.INVALID_CLIENT_SCOPES
     }
 
-    def "ユーザグループ作成API: 異常系 クライアント名が既に使われている場合は409エラー"() {
+    def "クライアント作成API: 異常系 クライアント名が既に使われている場合は409エラー"() {
         given:
         final user = this.login()
 
@@ -278,6 +280,145 @@ class ClientRestController_IT extends AbstractRestController_IT {
     def "クライアント作成API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.postRequest(CREATE_CLIENTS_PATH, this.clientUpsertRequest)
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "クライアント更新API: 正常系 IAMの管理者がクライアントを更新"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        final requestBody = ClientUpsertRequest.builder()
+            .name(inputName)
+            .scopes(this.clientUpsertRequest.scopes)
+            .build()
+
+        when:
+        final request = this.putRequest(String.format(UPDATE_CLIENTS_PATH, "A"), requestBody)
+        this.execute(request, HttpStatus.OK)
+
+        then:
+        final updatedClient = sql.firstRow("SELECT * FROM oauth2_registered_client")
+        updatedClient.client_name == requestBody.name
+        updatedClient.scopes == requestBody.scopes.join(",")
+
+        where:
+        inputName << ["A", "B"]
+    }
+
+    def "クライアント更新API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_CLIENTS_PATH, "A"), this.clientUpsertRequest)
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "クライアント更新API: 異常系 クライアントが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_CLIENTS_PATH, "A"), this.clientUpsertRequest)
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_CLIENT))
+    }
+
+    def "クライアント更新API: 異常系 リクエストボディのバリデーション"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        final requestBody = ClientUpsertRequest.builder()
+            .name(inputName)
+            .scopes(inputScopes)
+            .build()
+
+        expect:
+        final request = this.putRequest(String.format(UPDATE_CLIENTS_PATH, "A"), requestBody)
+        this.execute(request, new BadRequestException(expectedErrorCode))
+
+        where:
+        inputName                      | inputScopes            || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | [Scope.USER_READ.name] || ErrorCode.INVALID_CLIENT_NAME
+        RandomHelper.alphanumeric(101) | [Scope.USER_READ.name] || ErrorCode.INVALID_CLIENT_NAME
+        RandomHelper.alphanumeric(1)   | []                     || ErrorCode.CLIENT_SCOPES_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(1)   | [""]                   || ErrorCode.INVALID_CLIENT_SCOPES
+    }
+
+    def "クライアント更新API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.putRequest(String.format(UPDATE_CLIENTS_PATH, "A"), this.clientUpsertRequest)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

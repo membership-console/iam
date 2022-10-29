@@ -83,6 +83,30 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         createdClient.scopes == client.scopes.collect({ it.name }).join(",")
     }
 
+    def "updateNameAndScopes: クライアント名とスコープリストを更新"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        final client = ClientModel.builder()
+            .id("A")
+            .name(RandomHelper.alphanumeric(10))
+            .scopes([Scope.USER_READ, Scope.EMAIL])
+            .build()
+
+        when:
+        this.sut.updateNameAndScopes(client)
+
+        then:
+        final updatedClient = sql.firstRow("SELECT * FROM oauth2_registered_client")
+        updatedClient.client_name == client.name
+        updatedClient.scopes == client.scopes.collect({ it.name }).join(",")
+    }
+
     def "existsByName: クライアント名の存在確認"() {
         given:
         // @formatter:off
