@@ -33,6 +33,13 @@ public interface ClientRepository {
     void insert(final ClientModel clientModel);
 
     /**
+     * クライアント名とスコープリストを更新
+     * 
+     * @param clientModel クライアント
+     */
+    void updateNameAndScopes(final ClientModel clientModel);
+
+    /**
      * クライアント名の存在確認
      *
      * @param name クライアント名

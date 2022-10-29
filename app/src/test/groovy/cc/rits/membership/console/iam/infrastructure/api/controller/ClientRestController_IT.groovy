@@ -13,7 +13,8 @@ import org.springframework.http.HttpStatus
 import spock.lang.Shared
 
 /**
- * ClientRestControllerの統合テスト*/
+ * ClientRestControllerの統合テスト
+ s*/
 class ClientRestController_IT extends AbstractRestController_IT {
 
     // API PATH

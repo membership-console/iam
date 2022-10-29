@@ -28,7 +28,6 @@ class UpdateUserGroupUseCase_UT extends AbstractUseCase_UT {
         final requestBody = RandomHelper.mock(UserGroupUpsertRequest)
         requestBody.name = userGroup.name + "..."
 
-
         when:
         this.sut.handle(loginUser, userGroup.id, requestBody)
 

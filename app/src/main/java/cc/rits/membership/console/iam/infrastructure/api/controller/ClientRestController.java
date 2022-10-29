@@ -13,10 +13,7 @@ import cc.rits.membership.console.iam.infrastructure.api.response.ClientCredenti
 import cc.rits.membership.console.iam.infrastructure.api.response.ClientResponse;
 import cc.rits.membership.console.iam.infrastructure.api.response.ClientsResponse;
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
-import cc.rits.membership.console.iam.usecase.client.CreateClientUseCase;
-import cc.rits.membership.console.iam.usecase.client.DeleteClientUseCase;
-import cc.rits.membership.console.iam.usecase.client.GetClientUseCase;
-import cc.rits.membership.console.iam.usecase.client.GetClientsUseCase;
+import cc.rits.membership.console.iam.usecase.client.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +32,8 @@ public class ClientRestController {
     private final GetClientUseCase getClientUseCase;
 
     private final CreateClientUseCase createClientUseCase;
+
+    private final UpdateClientUseCase updateClientUseCase;
 
     private final DeleteClientUseCase deleteClientUseCase;
 
@@ -101,7 +100,7 @@ public class ClientRestController {
         @PathVariable("id") final String id, //
         @RequestValidated @RequestBody final ClientUpsertRequest requestBody //
     ) {
-        // TODO: クライアント更新APIを実装
+        this.updateClientUseCase.handle(loginUser, id, requestBody);
     }
 
     /**
