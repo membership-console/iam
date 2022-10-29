@@ -1,6 +1,7 @@
 package cc.rits.membership.console.iam.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 
@@ -15,6 +16,14 @@ public interface ClientRepository {
      * @return クライアントリスト
      */
     List<ClientModel> selectAll();
+
+    /**
+     * IDからクライアントを取得
+     * 
+     * @param id ID
+     * @return クライアント
+     */
+    Optional<ClientModel> selectById(final String id);
 
     /**
      * クライアントを作成

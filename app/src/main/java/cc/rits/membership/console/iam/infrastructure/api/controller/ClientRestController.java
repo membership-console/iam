@@ -15,6 +15,7 @@ import cc.rits.membership.console.iam.infrastructure.api.response.ClientsRespons
 import cc.rits.membership.console.iam.infrastructure.api.validation.RequestValidated;
 import cc.rits.membership.console.iam.usecase.client.CreateClientUseCase;
 import cc.rits.membership.console.iam.usecase.client.DeleteClientUseCase;
+import cc.rits.membership.console.iam.usecase.client.GetClientUseCase;
 import cc.rits.membership.console.iam.usecase.client.GetClientsUseCase;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 public class ClientRestController {
 
     private final GetClientsUseCase getClientsUseCase;
+
+    private final GetClientUseCase getClientUseCase;
 
     private final CreateClientUseCase createClientUseCase;
 
@@ -50,6 +53,22 @@ public class ClientRestController {
             .map(ClientResponse::new) //
             .collect(Collectors.toList());
         return new ClientsResponse(clients);
+    }
+
+    /**
+     * クライアント取得API
+     *
+     * @param loginUser ログインユーザ
+     * @param id ID
+     * @return クライアント
+     */
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientResponse getClient( //
+        final UserModel loginUser, //
+        @PathVariable("id") final String id //
+    ) {
+        return new ClientResponse(this.getClientUseCase.handle(loginUser, id));
     }
 
     /**

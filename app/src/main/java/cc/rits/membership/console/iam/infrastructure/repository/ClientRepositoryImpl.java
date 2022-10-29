@@ -1,6 +1,7 @@
 package cc.rits.membership.console.iam.infrastructure.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,12 @@ public class ClientRepositoryImpl implements ClientRepository {
         return this.oAuth2RegisteredClientMapper.selectByExample(example).stream() //
             .map(ClientModel::new) //
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ClientModel> selectById(final String id) {
+        return Optional.ofNullable(this.oAuth2RegisteredClientMapper.selectByPrimaryKey(id)) //
+            .map(ClientModel::new);
     }
 
     @Override
