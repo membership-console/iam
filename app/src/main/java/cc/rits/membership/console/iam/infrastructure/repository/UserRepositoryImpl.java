@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.infrastructure.db.entity.User;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserMapper;
 import cc.rits.membership.console.iam.infrastructure.factory.UserFactory;
@@ -33,6 +34,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserModel> selectById(final Integer id) {
         return this.userMapper.selectById(id).map(UserModel::new);
+    }
+
+    @Override
+    public List<String> selectEmailsByIds(final List<Integer> ids) {
+        final var example = new UserExample();
+        example.createCriteria().andIdIn(ids);
+        return this.userMapper.selectByExample(example).stream() //
+            .map(User::getEmail) //
+            .collect(Collectors.toList());
     }
 
     @Override
