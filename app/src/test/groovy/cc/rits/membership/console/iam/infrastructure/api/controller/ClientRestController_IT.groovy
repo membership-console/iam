@@ -14,7 +14,7 @@ import spock.lang.Shared
 
 /**
  * ClientRestControllerの統合テスト
- s*/
+ */
 class ClientRestController_IT extends AbstractRestController_IT {
 
     // API PATH
@@ -24,6 +24,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
     static final String CREATE_CLIENTS_PATH = BASE_PATH
     static final String UPDATE_CLIENTS_PATH = BASE_PATH + "/%s"
     static final String DELETE_CLIENTS_PATH = BASE_PATH + "/%s"
+    static final String REISSUE_CREDENTIALS_PATH = BASE_PATH + "/%s/reissue"
 
     @Shared
     ClientUpsertRequest clientUpsertRequest = ClientUpsertRequest.builder()
@@ -506,6 +507,101 @@ class ClientRestController_IT extends AbstractRestController_IT {
     def "クライアント削除API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
+        this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
+    }
+
+    def "クライアント認証情報再発行API: 正常系 IAMの管理者が認証情報を再発行"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        when:
+        final request = this.postRequest(String.format(REISSUE_CREDENTIALS_PATH, "A"))
+        final response = this.execute(request, HttpStatus.OK, ClientCredentialsResponse)
+
+        then:
+        final updatedClient = sql.firstRow("SELECT * FROM oauth2_registered_client")
+        updatedClient.client_id == response.clientId
+        this.authUtil.isMatchPasswordAndHash(response.clientSecret, updatedClient.client_secret as String)
+    }
+
+    def "クライアント認証情報再発行API: 異常系 IAMの管理者以外は403エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_VIEWER.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.postRequest(String.format(REISSUE_CREDENTIALS_PATH, "A"))
+        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+    }
+
+    def "クライアント認証情報再発行API: 異常系 クライアントが存在しない場合は404エラー"() {
+        given:
+        final user = this.login()
+
+        // @formatter:off
+        TableHelper.insert sql, "user_group", {
+            id | name
+            1  | ""
+        }
+        TableHelper.insert sql, "user_group_role", {
+            user_group_id | role_id
+            1             | Role.IAM_ADMIN.id
+        }
+        TableHelper.insert sql, "r__user__user_group", {
+            user_id | user_group_id
+            user.id | 1
+        }
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        expect:
+        final request = this.postRequest(String.format(REISSUE_CREDENTIALS_PATH, "B"))
+        this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_CLIENT))
+    }
+
+    def "クライアント認証情報再発行API: 異常系 ログインしていない場合は401エラー"() {
+        expect:
+        final request = this.postRequest(String.format(REISSUE_CREDENTIALS_PATH, "A"))
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 

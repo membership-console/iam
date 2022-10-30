@@ -7,4 +7,11 @@
             scopes=#{scopes}
         WHERE id = #{id}
     </update>
+
+    <update id="updateClientIdAndSecretById">
+        UPDATE `oauth2_registered_client`
+        SET client_id=#{clientId},
+            client_secret=#{clientSecret}
+        WHERE id = #{id}
+    </update>
 </mapper>

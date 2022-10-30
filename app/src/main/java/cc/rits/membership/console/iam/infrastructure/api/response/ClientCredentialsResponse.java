@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * クライアントクレデンシャルレスポンス
+ * クライアント認証情報レスポンス
  */
 @Data
 @Builder

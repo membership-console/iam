@@ -65,6 +65,12 @@ public class ClientRepositoryImpl implements ClientRepository {
     }
 
     @Override
+    public void updateClientIdAndSecret(final ClientModel clientModel) {
+        this.oAuth2RegisteredClientMapper.updateClientIdAndSecretById(clientModel.getId(), clientModel.getClientId(),
+            this.passwordEncoder.encode(clientModel.getClientSecret()));
+    }
+
+    @Override
     public boolean existsByName(final String name) {
         final var example = new Oauth2RegisteredClientExample();
         example.createCriteria().andClientNameEqualTo(name);

@@ -6,4 +6,6 @@ public interface OAuth2RegisteredClientMapper extends Oauth2RegisteredClientBase
 
     void updateClientNameAndScopesById(final String id, final String clientName, final String scopes);
 
+    void updateClientIdAndSecretById(final String id, final String clientId, final String clientSecret);
+
 }
