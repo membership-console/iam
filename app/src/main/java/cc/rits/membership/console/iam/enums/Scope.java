@@ -38,4 +38,8 @@ public enum Scope {
         return Arrays.stream(values()).filter(e -> e.getName().equals(name)).findFirst();
     }
 
+    public String getAuthorityName() {
+        return "SCOPE_" + this.getName();
+    }
+
 }

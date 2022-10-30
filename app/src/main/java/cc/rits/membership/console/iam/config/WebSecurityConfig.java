@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -16,6 +17,7 @@ import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider;
 import cc.rits.membership.console.iam.config.auth.IamUserDetailsService;
 import cc.rits.membership.console.iam.config.auth.UnauthorizedAuthenticationEntryPoint;
+import cc.rits.membership.console.iam.enums.Scope;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -32,13 +34,15 @@ public class WebSecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtDecoder jwtDecoder;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**");
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         // CORSを無効化
         http.cors().disable();
 
@@ -48,10 +52,16 @@ public class WebSecurityConfig {
         // アクセス許可
         http.authorizeRequests() //
             .antMatchers("/api/health", "/api/login", "/api/request_password_reset", "/api/password_reset").permitAll() //
+            .antMatchers("/api/oauth/users").hasAuthority(Scope.USER_READ.getAuthorityName()) //
             .antMatchers("/api/**").hasRole("USER") //
             .antMatchers("/**").permitAll() //
             .anyRequest().authenticated() //
             .and().exceptionHandling().authenticationEntryPoint(this.authenticationEntryPoint);
+
+        // リソースサーバ
+        http.oauth2ResourceServer() //
+            .jwt() //
+            .decoder(this.jwtDecoder);
 
         return http.build();
     }

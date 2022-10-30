@@ -5,9 +5,12 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,9 +18,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 
     private static final String ANONYMOUS_USER = "anonymousUser";
+
+    private final RegisteredClientRepository registeredClientRepository;
 
     /**
      * ロギングがアクティブか取得
@@ -76,8 +82,14 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 
         // クライアント情報
         final var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.nonNull(authentication) && !Objects.equals(authentication.getName(), ANONYMOUS_USER)) {
-            message.append(", user=").append(authentication.getName());
+        if (Objects.nonNull(authentication)) {
+            if (authentication instanceof JwtAuthenticationToken) {
+                final var registeredClient = this.registeredClientRepository.findByClientId(authentication.getName());
+                assert registeredClient != null;
+                message.append(", client=").append(registeredClient.getClientName());
+            } else if (!Objects.equals(authentication.getName(), ANONYMOUS_USER)) {
+                message.append(", user=").append(authentication.getName());
+            }
         }
 
         message.append(suffix);
