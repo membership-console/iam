@@ -22,8 +22,10 @@ exception:
   unauthorized:
     user_not_logged_in: "ユーザはログインしていません。問題が解決しない場合は、管理者までご連絡ください。"
     incorrect_email_or_password: "メールアドレスかパスワードが間違っています。"
+    invalid_access_token: "不正なアクセストークンが指定されました。"
   forbidden:
     user_has_no_permission: "その動作は許可されていません。"
+    client_has_no_permission: "その動作は許可されていません。"
   not_found:
     api: "APIが見つかりません。"
     user: "ユーザが見つかりません。"

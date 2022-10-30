@@ -60,10 +60,14 @@ public enum ErrorCode {
 
     INCORRECT_EMAIL_OR_PASSWORD(HttpStatus.UNAUTHORIZED, "exception.unauthorized.incorrect_email_or_password"),
 
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "exception.unauthorized.invalid_access_token"),
+
     /**
      * 403 Forbidden
      */
     USER_HAS_NO_PERMISSION(HttpStatus.FORBIDDEN, "exception.forbidden.user_has_no_permission"),
+
+    CLIENT_HAS_NO_PERMISSION(HttpStatus.FORBIDDEN, "exception.forbidden.client_has_no_permission"),
 
     /**
      * 404 Not Found

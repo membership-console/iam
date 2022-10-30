@@ -25,6 +25,12 @@ spring:
     locations: classpath:db/migration
     connect-retries: 5
     enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+          jws-algorithms: RS512
 
 springdoc:
   swagger-ui:

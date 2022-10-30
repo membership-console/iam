@@ -61,4 +61,14 @@ public class ClientModel implements Serializable {
             .collect(Collectors.toList());
     }
 
+    /**
+     * スコープを持つかチェック
+     *
+     * @param scope スコープ
+     * @return チェック結果
+     */
+    public boolean hasScope(final Scope scope) {
+        return this.getScopes().stream().anyMatch(scope::equals);
+    }
+
 }

@@ -45,6 +45,14 @@ public class ClientRepositoryImpl implements ClientRepository {
     }
 
     @Override
+    public Optional<ClientModel> selectByClientId(final String clientId) {
+        final var example = new Oauth2RegisteredClientExample();
+        example.createCriteria().andClientIdEqualTo(clientId);
+        return this.oAuth2RegisteredClientMapper.selectByExample(example).stream() //
+            .map(ClientModel::new).findFirst();
+    }
+
+    @Override
     public void insert(final ClientModel clientModel) {
         final var registeredClientBuilder = RegisteredClient.withId(clientModel.getId());
         registeredClientBuilder.clientName(clientModel.getName());
