@@ -113,6 +113,24 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result.isEmpty()
     }
 
+    def "selectEmailsByIds: IDリストからメールアドレスリストを取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "user", {
+            id | first_name | last_name | email              | password | entrance_year
+            1  | ""         | ""        | "1@example.com"    | ""       | 2000
+            2  | ""         | ""        | "2@example.com"    | ""       | 2000
+            3  | ""         | ""        | "3@example.com"    | ""       | 2000
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.selectEmailsByIds([1, 2])
+
+        then:
+        result == ["1@example.com", "2@example.com"]
+    }
+
     def "selectAll: ユーザリストを全件取得"() {
         given:
         // @formatter:off

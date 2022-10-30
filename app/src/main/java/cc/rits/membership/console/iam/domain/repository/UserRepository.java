@@ -27,6 +27,14 @@ public interface UserRepository {
     Optional<UserModel> selectById(final Integer id);
 
     /**
+     * IDリストからメールアドレスを取得
+     * 
+     * @param ids ユーザIDリスト
+     * @return メールアドレスリスト
+     */
+    List<String> selectEmailsByIds(final List<Integer> ids);
+
+    /**
      * ユーザリストを全件取得
      * 
      * @return ユーザリスト
