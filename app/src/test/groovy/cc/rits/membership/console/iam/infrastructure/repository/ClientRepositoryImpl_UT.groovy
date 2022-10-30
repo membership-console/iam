@@ -5,6 +5,7 @@ import cc.rits.membership.console.iam.enums.Scope
 import cc.rits.membership.console.iam.helper.RandomHelper
 import cc.rits.membership.console.iam.helper.TableHelper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 
 /**
  * ClientRepositoryの単体テスト
@@ -13,6 +14,9 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
 
     @Autowired
     ClientRepositoryImpl sut
+
+    @Autowired
+    PasswordEncoder passwordEncoder
 
     def "selectAll: クライアントリストを全件取得"() {
         given:
@@ -81,6 +85,7 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         createdClient.client_name == client.name
         createdClient.client_id == client.clientId
         createdClient.scopes == client.scopes.collect({ it.name }).join(",")
+        this.passwordEncoder.matches(client.clientSecret, createdClient.client_secret as String)
     }
 
     def "updateNameAndScopes: クライアント名とスコープリストを更新"() {
@@ -105,6 +110,30 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         final updatedClient = sql.firstRow("SELECT * FROM oauth2_registered_client")
         updatedClient.client_name == client.name
         updatedClient.scopes == client.scopes.collect({ it.name }).join(",")
+    }
+
+    def "updateClientIdAndSecret: クライアントIDとシークレットを更新"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        final client = ClientModel.builder()
+            .id("A")
+            .clientId(RandomHelper.alphanumeric(10))
+            .clientSecret(RandomHelper.alphanumeric(10))
+            .build()
+
+        when:
+        this.sut.updateClientIdAndSecret(client)
+
+        then:
+        final updatedClient = sql.firstRow("SELECT * FROM oauth2_registered_client")
+        updatedClient.client_id == client.clientId
+        this.passwordEncoder.matches(client.clientSecret, updatedClient.client_secret as String)
     }
 
     def "existsByName: クライアント名の存在確認"() {

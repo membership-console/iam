@@ -40,6 +40,13 @@ public interface ClientRepository {
     void updateNameAndScopes(final ClientModel clientModel);
 
     /**
+     * クライアントIDとシークレットを更新
+     * 
+     * @param clientModel クライアント
+     */
+    void updateClientIdAndSecret(final ClientModel clientModel);
+
+    /**
      * クライアント名の存在確認
      *
      * @param name クライアント名

@@ -37,6 +37,8 @@ public class ClientRestController {
 
     private final DeleteClientUseCase deleteClientUseCase;
 
+    private final ReissueCredentialsUseCase reissueCredentialsUseCase;
+
     /**
      * クライアントリスト取得API
      *
@@ -75,7 +77,7 @@ public class ClientRestController {
      *
      * @param loginUser ログインユーザ
      * @param requestBody クライアント作成リクエスト
-     * @return クレデンシャル
+     * @return 認証情報
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -116,6 +118,21 @@ public class ClientRestController {
         @PathVariable("id") final String id //
     ) {
         this.deleteClientUseCase.handle(loginUser, id);
+    }
+
+    /**
+     * クライアント認証情報再発行API
+     *
+     * @param loginUser ログインユーザ
+     * @param id ID
+     */
+    @PostMapping("{id}/reissue")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientCredentialsResponse reissueCredentials( //
+        final UserModel loginUser, //
+        @PathVariable("id") final String id //
+    ) {
+        return new ClientCredentialsResponse(this.reissueCredentialsUseCase.handle(loginUser, id));
     }
 
 }
