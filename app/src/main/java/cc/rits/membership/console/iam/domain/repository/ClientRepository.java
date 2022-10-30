@@ -26,6 +26,14 @@ public interface ClientRepository {
     Optional<ClientModel> selectById(final String id);
 
     /**
+     * クライアントIDからクライアントを取得
+     *
+     * @param clientId クライアントID
+     * @return クライアント
+     */
+    Optional<ClientModel> selectByClientId(final String clientId);
+
+    /**
      * クライアントを作成
      *
      * @param clientModel クライアント

@@ -67,6 +67,35 @@ class ClientRepositoryImpl_UT extends AbstractRepository_UT {
         result.isEmpty()
     }
 
+    def "selectByClientId: クライアントIDからクライアントを取得"() {
+        given:
+        // @formatter:off
+        TableHelper.insert sql, "oauth2_registered_client", {
+            id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
+            "A" | "clientA" | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
+            "B" | "clientB" | "B"         | [Scope.USER_READ.name].join(",")                  | ""            | ""                            | ""                        | ""              | ""
+        }
+        // @formatter:on
+
+        when:
+        final result = this.sut.selectByClientId("clientA")
+
+        then:
+        result.isPresent()
+        result.get().id == "A"
+        result.get().clientId == "clientA"
+        result.get().name == "A"
+        result.get().scopes == [Scope.USER_READ, Scope.EMAIL]
+    }
+
+    def "selectByClientId: 存在しない場合はOptional.empty()を返す"() {
+        when:
+        final result = this.sut.selectByClientId("A")
+
+        then:
+        result.isEmpty()
+    }
+
     def "insert: クライアントを作成"() {
         given:
         final client = ClientModel.builder()

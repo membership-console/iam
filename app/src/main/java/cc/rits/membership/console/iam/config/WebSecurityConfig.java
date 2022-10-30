@@ -14,10 +14,10 @@ import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
+import cc.rits.membership.console.iam.config.auth.ClientAuthenticationEntryPoint;
 import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider;
 import cc.rits.membership.console.iam.config.auth.IamUserDetailsService;
-import cc.rits.membership.console.iam.config.auth.UnauthorizedAuthenticationEntryPoint;
-import cc.rits.membership.console.iam.enums.Scope;
+import cc.rits.membership.console.iam.config.auth.UserAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -28,7 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final UnauthorizedAuthenticationEntryPoint authenticationEntryPoint;
+    private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
+
+    private final ClientAuthenticationEntryPoint clientAuthenticationEntryPoint;
 
     private final IamUserDetailsService userDetailsService;
 
@@ -52,16 +54,17 @@ public class WebSecurityConfig {
         // アクセス許可
         http.authorizeRequests() //
             .antMatchers("/api/health", "/api/login", "/api/request_password_reset", "/api/password_reset").permitAll() //
-            .antMatchers("/api/oauth/users").hasAuthority(Scope.USER_READ.getAuthorityName()) //
+            .antMatchers("/api/admin/**").permitAll() //
             .antMatchers("/api/**").hasRole("USER") //
             .antMatchers("/**").permitAll() //
             .anyRequest().authenticated() //
-            .and().exceptionHandling().authenticationEntryPoint(this.authenticationEntryPoint);
+            .and().exceptionHandling().authenticationEntryPoint(this.userAuthenticationEntryPoint);
 
         // リソースサーバ
         http.oauth2ResourceServer() //
             .jwt() //
-            .decoder(this.jwtDecoder);
+            .decoder(this.jwtDecoder) //
+            .and().authenticationEntryPoint(this.clientAuthenticationEntryPoint);
 
         return http.build();
     }
