@@ -1,10 +1,8 @@
 package cc.rits.membership.console.iam.usecase.front.client;
 
-import java.util.Base64;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,8 +53,6 @@ public class CreateClientUseCase {
             .collect(Collectors.toList());
         final var client = ClientModel.builder() //
             .name(requestBody.getName()) //
-            .clientId(Base64.getUrlEncoder().encodeToString(KeyGenerators.secureRandom(32).generateKey())) //
-            .clientSecret(Base64.getUrlEncoder().encodeToString(KeyGenerators.secureRandom(32).generateKey())) //
             .scopes(scopes) //
             .build();
         this.clientRepository.insert(client);

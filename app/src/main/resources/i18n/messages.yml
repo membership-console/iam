@@ -19,6 +19,7 @@ exception:
     invalid_client_name: "OAuthクライアント名は1~100文字にしてください。"
     invalid_client_scopes: "不正なスコープが指定されました。"
     client_scopes_must_not_be_empty: "OAuthクライアントには最低1個以上のスコープを割り当てる必要があります。"
+    user_ids_must_not_be_empty: "メール送信するユーザIDリストを指定してください。"
   unauthorized:
     user_not_logged_in: "ユーザはログインしていません。問題が解決しない場合は、管理者までご連絡ください。"
     incorrect_email_or_password: "メールアドレスかパスワードが間違っています。"

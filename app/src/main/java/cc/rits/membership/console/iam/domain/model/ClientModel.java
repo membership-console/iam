@@ -1,11 +1,10 @@
 package cc.rits.membership.console.iam.domain.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import org.springframework.security.crypto.keygen.KeyGenerators;
 
 import cc.rits.membership.console.iam.annotation.SwaggerHiddenParameter;
 import cc.rits.membership.console.iam.enums.Scope;
@@ -36,12 +35,14 @@ public class ClientModel implements Serializable {
     /**
      * クライアントID
      */
-    String clientId;
+    @Builder.Default
+    String clientId = Base64.getUrlEncoder().encodeToString(KeyGenerators.secureRandom(32).generateKey());
 
     /**
      * クライアントシークレット
      */
-    String clientSecret;
+    @Builder.Default
+    String clientSecret = Base64.getUrlEncoder().encodeToString(KeyGenerators.secureRandom(32).generateKey());
 
     /**
      * スコープリスト

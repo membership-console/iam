@@ -2,6 +2,8 @@ package cc.rits.membership.console.iam.infrastructure.api.request;
 
 import java.util.List;
 
+import cc.rits.membership.console.iam.exception.BadRequestException;
+import cc.rits.membership.console.iam.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +40,11 @@ public class EmailSendRequest implements BaseRequest {
     /**
      * バリデーション
      */
-    public void validate() {}
+    @Override
+    public void validate() {
+        if (this.userIds.isEmpty()) {
+            throw new BadRequestException(ErrorCode.USER_IDS_MUST_NOT_BE_EMPTY);
+        }
+    }
 
 }
