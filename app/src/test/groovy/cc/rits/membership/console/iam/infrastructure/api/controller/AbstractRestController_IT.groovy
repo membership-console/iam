@@ -2,21 +2,28 @@ package cc.rits.membership.console.iam.infrastructure.api.controller
 
 import cc.rits.membership.console.iam.AbstractDatabaseSpecification
 import cc.rits.membership.console.iam.config.auth.LoginUserDetails
+import cc.rits.membership.console.iam.domain.model.ClientModel
 import cc.rits.membership.console.iam.domain.model.UserModel
+import cc.rits.membership.console.iam.enums.Scope
 import cc.rits.membership.console.iam.exception.BaseException
 import cc.rits.membership.console.iam.helper.JsonConvertHelper
 import cc.rits.membership.console.iam.helper.RandomHelper
+import cc.rits.membership.console.iam.infrastructure.api.response.AccessTokenResponse
 import cc.rits.membership.console.iam.infrastructure.api.response.ErrorResponse
 import cc.rits.membership.console.iam.property.AuthProperty
 import cc.rits.membership.console.iam.util.AuthUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.oauth2.core.AuthorizationGrantType
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -28,7 +35,6 @@ import org.springframework.web.context.WebApplicationContext
 import spock.lang.Shared
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 
 /**
@@ -52,6 +58,9 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
 
     @Autowired
     protected AuthProperty authProperty
+
+    @Autowired
+    private JdbcRegisteredClientRepository registeredClientRepository
 
     @Shared
     protected MockHttpSession session = new MockHttpSession()
@@ -80,7 +89,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         return MockMvcRequestBuilders.get(path)
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -94,7 +102,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         return MockMvcRequestBuilders.post(path)
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -111,7 +118,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .params(params)
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -128,7 +134,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .content(JsonConvertHelper.convertObjectToJson(content))
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -145,7 +150,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             .content(JsonConvertHelper.convertObjectToJson(content))
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -159,7 +163,6 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         return MockMvcRequestBuilders.delete(path)
             .session(this.session)
             .with(authentication(this.authentication))
-            .with(csrf())
     }
 
     /**
@@ -171,7 +174,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
      * @return MVC result
      */
     MvcResult execute(final MockHttpServletRequestBuilder request, final HttpStatus status) {
-        final result = mockMvc.perform(request).andReturn()
+        final result = this.mockMvc.perform(request).andReturn()
 
         assert result.response.status == status.value()
         return result
@@ -187,7 +190,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
      * @return response
      */
     def <T> T execute(final MockHttpServletRequestBuilder request, final HttpStatus status, final Class<T> clazz) {
-        final result = mockMvc.perform(request).andReturn()
+        final result = this.mockMvc.perform(request).andReturn()
 
         assert result.response.status == status.value()
         return JsonConvertHelper.convertJsonToObject(result.getResponse().getContentAsString(), clazz)
@@ -202,7 +205,7 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
      * @return error response
      */
     ErrorResponse execute(final MockHttpServletRequestBuilder request, final BaseException exception) {
-        final result = mockMvc.perform(request).andReturn()
+        final result = this.mockMvc.perform(request).andReturn()
         final response = JsonConvertHelper.convertJsonToObject(result.response.contentAsString, ErrorResponse.class)
 
         final expectedErrorMessage = this.getErrorMessage(exception)
@@ -264,6 +267,33 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
             this.session.invalidate()
         }
         this.authentication = null
+    }
+
+    /**
+     * クライアントを作成
+     *
+     * @return アクセストークン
+     */
+    protected AccessTokenResponse createClient(final List<Scope> scopes) {
+        final client = ClientModel.builder()
+            .name(RandomHelper.alphanumeric(200))
+            .scopes(scopes)
+            .build()
+
+        final registeredClientBuilder = RegisteredClient.withId(client.getId())
+        registeredClientBuilder.clientName(client.name)
+        registeredClientBuilder.clientId(client.clientId)
+        registeredClientBuilder.clientSecret(this.authUtil.hashingPassword(client.clientSecret))
+        registeredClientBuilder.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+        client.getScopes().forEach(scope -> registeredClientBuilder.scope(scope.name))
+        final registeredClient = registeredClientBuilder.build()
+        this.registeredClientRepository.save(registeredClient)
+
+        final request = MockMvcRequestBuilders.post("/oauth2/token")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.AUTHORIZATION, "Basic " + Base64.getUrlEncoder().encodeToString("${client.clientId}:${client.clientSecret}".bytes))
+            .param("grant_type", "client_credentials")
+        return this.execute(request, HttpStatus.OK, AccessTokenResponse)
     }
 
     /**

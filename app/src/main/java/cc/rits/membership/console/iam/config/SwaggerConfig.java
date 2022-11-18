@@ -25,18 +25,18 @@ public class SwaggerConfig {
     private final ProjectProperty projectProperty;;
 
     @Bean
-    public GroupedOpenApi generalApi() {
+    public GroupedOpenApi frontApi() {
         return GroupedOpenApi.builder() //
-            .group("General API") //
+            .group("Front API") //
             .packagesToScan("cc.rits.membership.console.iam.infrastructure.api.controller.general") //
             .build();
     }
 
     @Bean
-    public GroupedOpenApi adminApi() {
+    public GroupedOpenApi oauth2Api() {
         return GroupedOpenApi.builder() //
             .group("Admin API") //
-            .packagesToScan("cc.rits.membership.console.iam.infrastructure.api.controller.admin") //
+            .packagesToScan("cc.rits.membership.console.iam.infrastructure.api.controller.oauth2") //
             .build();
     }
 

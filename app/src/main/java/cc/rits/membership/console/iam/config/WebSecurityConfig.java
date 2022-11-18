@@ -9,7 +9,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
@@ -48,13 +47,13 @@ public class WebSecurityConfig {
         // CORSを無効化
         http.cors().disable();
 
-        // CSRF対策
-        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        // CSRF対策を無効化
+        http.csrf().disable();
 
         // アクセス許可
         http.authorizeRequests() //
             .antMatchers("/api/health", "/api/login", "/api/request_password_reset", "/api/password_reset").permitAll() //
-            .antMatchers("/api/admin/**").permitAll() //
+            .antMatchers("/api/oauth2/**").permitAll() //
             .antMatchers("/api/**").hasRole("USER") //
             .antMatchers("/**").permitAll() //
             .anyRequest().authenticated() //
@@ -75,7 +74,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public IamAuthenticationProvider adminAuthenticationProvider() {
+    public IamAuthenticationProvider oauth2AuthenticationProvider() {
         final var authenticationProvider = new IamAuthenticationProvider();
         authenticationProvider.setUserDetailsService(this.userDetailsService);
         authenticationProvider.setPasswordEncoder(this.passwordEncoder);

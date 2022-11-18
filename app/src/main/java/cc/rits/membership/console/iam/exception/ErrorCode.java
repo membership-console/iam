@@ -53,6 +53,8 @@ public enum ErrorCode {
 
     CLIENT_SCOPES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.client_scopes_must_not_be_empty"),
 
+    USER_IDS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, "exception.bad_request.user_ids_must_not_be_empty"),
+
     /**
      * 401 Unauthorized
      */
