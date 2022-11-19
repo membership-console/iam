@@ -26,14 +26,6 @@ class AbstractDatabaseSpecification extends AbstractSpecification {
     }
 
     /**
-     * setup before test class
-     */
-    def setupSpec() {
-        final var timeZone = TimeZone.getTimeZone("Asia/Tokyo")
-        TimeZone.setDefault(timeZone)
-    }
-
-    /**
      * cleanup after test case
      */
     def cleanup() {

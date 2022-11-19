@@ -8,7 +8,6 @@ services:
       MYSQL_USER: "iam"
       MYSQL_PASSWORD: "iam"
       MYSQL_ROOT_PASSWORD: "iam"
-      TZ: "Asia/Tokyo"
     ports:
       - "3306:3306"
     volumes:
@@ -23,7 +22,6 @@ services:
       MYSQL_USER: "iam"
       MYSQL_PASSWORD: "iam"
       MYSQL_ROOT_PASSWORD: "iam"
-      TZ: "Asia/Tokyo"
     ports:
       - "3307:3306"
     volumes:
