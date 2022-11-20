@@ -22,13 +22,13 @@ public class SwaggerConfig {
         SpringDocUtils.getConfig().addAnnotationsToIgnore(SwaggerHiddenParameter.class);
     }
 
-    private final ProjectProperty projectProperty;;
+    private final ProjectProperty projectProperty;
 
     @Bean
     public GroupedOpenApi frontApi() {
         return GroupedOpenApi.builder() //
             .group("Front API") //
-            .packagesToScan("cc.rits.membership.console.iam.infrastructure.api.controller.general") //
+            .packagesToScan("cc.rits.membership.console.iam.infrastructure.api.controller.front") //
             .build();
     }
 

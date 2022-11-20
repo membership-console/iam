@@ -45,6 +45,37 @@ $ java -jar iam-<version>.jar  # -Dspring.profiles.active=<environment>
 $ ./gradlew bootRun
 ```
 
+### DBマイグレーションとコード生成
+
+DBマイグレーションとORMには下記ツールを利用しています。
+
+* Flyway: DBマイグレーションツール
+* MyBatis: ORMフレームワーク
+
+#### DBマイグレーション
+
+`flywayMigrate`タスクでDBマイグレーションを実行できます。
+
+```sh
+$ ./gradlew flywayMigrate
+```
+
+Flywayはマイグレーションファイルのチェックサムを`flyway_schema_history`テーブルに保存することで、過去のマイグレーションファイルが書き換えられることを防いでいます。
+
+しかしながら、開発中は書き換えたくなることもあるでしょう。その場合は、下記コマンドで歴史を消すことが可能です。クリーンが完了したら、再度マイグレーションコマンドを実行してください。
+
+```sh
+$ ./gradlew flywayClean
+```
+
+#### MyBatisでコード生成
+
+下記コマンドで、DBからEntityファイルを生成できます。
+
+```sh
+$ ./gradlew mbGenerate
+```
+
 ### 依存関係のアップデート
 
 [Gradle Versions Plugin](https://github.com/ben-manes/gradle-versions-plugin)を使って、outdatedな依存関係をアップデートします。
