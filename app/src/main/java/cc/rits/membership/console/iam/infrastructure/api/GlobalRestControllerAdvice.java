@@ -173,17 +173,17 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> buildResponseEntity(final ErrorCode errorCode) {
         final var message = this.messageSource.getMessage(errorCode.getMessageKey(), null, Locale.ENGLISH);
         final var body = ErrorResponse.builder() //
-            .code(errorCode.getStatus().value()) //
+            .code(errorCode.getCode()) //
             .message(message) //
             .build();
 
-        if (errorCode.getStatus().is4xxClientError()) {
-            log.warn(String.format("%d: %s", errorCode.getStatus().value(), message));
-        } else if (errorCode.getStatus().is5xxServerError()) {
-            log.error(String.format("%d: %s", errorCode.getStatus().value(), message));
+        if (errorCode.getHttpStatus().is4xxClientError()) {
+            log.warn(String.format("%d: %s", errorCode.getCode(), message));
+        } else if (errorCode.getHttpStatus().is5xxServerError()) {
+            log.error(String.format("%d: %s", errorCode.getCode(), message));
         }
 
-        return new ResponseEntity<>(body, errorCode.getStatus());
+        return new ResponseEntity<>(body, errorCode.getHttpStatus());
     }
 
 }

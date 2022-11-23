@@ -8,12 +8,12 @@ import org.springframework.http.HttpStatus;
 public class BaseException extends RuntimeException {
 
     /**
-     * http status
+     * HTTPステータス
      */
     private final HttpStatus httpStatus;
 
     /**
-     * error code
+     * エラーコード
      */
     private final ErrorCode errorCode;
 
