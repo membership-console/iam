@@ -45,6 +45,7 @@ server:
     session:
       cookie:
         same-site: strict
+        path: /
   forward-headers-strategy: framework
   reactive:
     session:
