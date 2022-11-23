@@ -211,7 +211,8 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
         final expectedErrorMessage = this.getErrorMessage(exception)
 
         assert result.response.status == exception.httpStatus.value()
-        assert response.code == exception.errorCode.status.value()
+        assert result.response.status == exception.errorCode.httpStatus.value()
+        assert response.code == exception.errorCode.code
         assert response.message == expectedErrorMessage
         return response
     }
