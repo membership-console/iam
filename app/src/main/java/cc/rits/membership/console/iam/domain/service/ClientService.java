@@ -2,7 +2,7 @@ package cc.rits.membership.console.iam.domain.service;
 
 import org.springframework.stereotype.Service;
 
-import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.exception.ConflictException;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ClientService {
 
-    private final ClientRepository clientRepository;
+    private final IClientRepository clientRepository;
 
     /**
      * クライアント名が使われていないことをチェック

@@ -2,10 +2,10 @@ package cc.rits.membership.console.iam.usecase
 
 import cc.rits.membership.console.iam.AbstractSpecification
 import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider
-import cc.rits.membership.console.iam.domain.repository.ClientRepository
-import cc.rits.membership.console.iam.domain.repository.PasswordResetTokenRepository
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository
-import cc.rits.membership.console.iam.domain.repository.UserRepository
+import cc.rits.membership.console.iam.domain.repository.IClientRepository
+import cc.rits.membership.console.iam.domain.repository.IPasswordResetTokenRepository
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository
+import cc.rits.membership.console.iam.domain.repository.IUserRepository
 import cc.rits.membership.console.iam.domain.service.ClientService
 import cc.rits.membership.console.iam.domain.service.UserGroupService
 import cc.rits.membership.console.iam.domain.service.UserService
@@ -40,16 +40,16 @@ abstract class AbstractUseCase_UT extends AbstractSpecification {
     ClientService clientService = Mock()
 
     @SpringBean
-    UserRepository userRepository = Mock()
+    IUserRepository userRepository = Mock()
 
     @SpringBean
-    UserGroupRepository userGroupRepository = Mock()
+    IUserGroupRepository userGroupRepository = Mock()
 
     @SpringBean
-    PasswordResetTokenRepository passwordResetTokenRepository = Mock()
+    IPasswordResetTokenRepository passwordResetTokenRepository = Mock()
 
     @SpringBean
-    ClientRepository clientRepository = Mock()
+    IClientRepository clientRepository = Mock()
 
     @SpringBean
     AuthUtil authUtil = Mock()

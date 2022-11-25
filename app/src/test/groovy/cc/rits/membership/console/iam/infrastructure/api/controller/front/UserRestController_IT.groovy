@@ -180,7 +180,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         }
         // @formatter:on
 
-        this.userCreateRequest.userGroupIds = [1, 2]
+        this.userCreateRequest.userGroupIds = inputUserGroupIds
 
         when:
         final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
@@ -197,6 +197,12 @@ class UserRestController_IT extends AbstractRestController_IT {
         final created_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group WHERE user_id = :user_id", [user_id: createdUser.id])
         created_r__user__user_group_list*.user_id == this.userCreateRequest.userGroupIds.collect { createdUser.id }
         created_r__user__user_group_list*.user_group_id == this.userCreateRequest.userGroupIds
+
+        where:
+        inputUserGroupIds << [
+            [1, 2],
+            []
+        ]
     }
 
     def "ユーザ作成API: 異常系 IAMの管理者以外は403エラー"() {
@@ -295,16 +301,15 @@ class UserRestController_IT extends AbstractRestController_IT {
 
         where:
         inputFirstName                 | inputLastName                  | inputEmail           | inputPassword           | inputEntranceYear            | inputUserGroupIds || expectedErrorCode
-        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
-        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | RandomHelper.password() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_EMAIL
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | ""                      | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_PASSWORD_LENGTH
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 33                | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_PASSWORD_LENGTH
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 8                 | LocalDateTime.now().year     | [1]               || ErrorCode.PASSWORD_IS_TOO_SIMPLE
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year + 1 | [1]               || ErrorCode.INVALID_USER_ENTRANCE_YEAR
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.USER_GROUPS_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | RandomHelper.password() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_EMAIL
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | ""                      | LocalDateTime.now().year     | []                || ErrorCode.INVALID_PASSWORD_LENGTH
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 33                | LocalDateTime.now().year     | []                || ErrorCode.INVALID_PASSWORD_LENGTH
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | "." * 8                 | LocalDateTime.now().year     | []                || ErrorCode.PASSWORD_IS_TOO_SIMPLE
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | RandomHelper.password() | LocalDateTime.now().year + 1 | []                || ErrorCode.INVALID_USER_ENTRANCE_YEAR
     }
 
     def "ユーザ作成API: 異常系 ログインしていない場合は401エラー"() {
@@ -336,7 +341,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         // @formatter:on
 
         this.userUpdateRequest.email = inputEmail
-        this.userUpdateRequest.userGroupIds = [2, 3]
+        this.userUpdateRequest.userGroupIds = inputUserGroupIds
 
         when:
         final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), this.userUpdateRequest)
@@ -354,7 +359,10 @@ class UserRestController_IT extends AbstractRestController_IT {
         updated_r__user__user_group_list*.user_group_id == this.userUpdateRequest.userGroupIds
 
         where:
-        inputEmail << [AbstractRestController_IT.LOGIN_USER_EMAIL, "updated" + AbstractRestController_IT.LOGIN_USER_EMAIL]
+        inputEmail                   | inputUserGroupIds
+        LOGIN_USER_EMAIL             | [1, 2]
+        "updated" + LOGIN_USER_EMAIL | [1, 2]
+        LOGIN_USER_EMAIL             | []
     }
 
     def "ユーザ更新API: 異常系 IAMの管理者以外は403エラー"() {
@@ -460,13 +468,12 @@ class UserRestController_IT extends AbstractRestController_IT {
 
         where:
         inputFirstName                 | inputLastName                  | inputEmail           | inputEntranceYear            | inputUserGroupIds || expectedErrorCode
-        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
-        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_FIRST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_LAST_NAME
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | LocalDateTime.now().year     | [1]               || ErrorCode.INVALID_USER_EMAIL
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year + 1 | [1]               || ErrorCode.INVALID_USER_ENTRANCE_YEAR
-        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.USER_GROUPS_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(0)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(256) | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_FIRST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(0)   | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(256) | RandomHelper.email() | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_LAST_NAME
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | ""                   | LocalDateTime.now().year     | []                || ErrorCode.INVALID_USER_EMAIL
+        RandomHelper.alphanumeric(1)   | RandomHelper.alphanumeric(1)   | RandomHelper.email() | LocalDateTime.now().year + 1 | []                || ErrorCode.INVALID_USER_ENTRANCE_YEAR
     }
 
     def "ユーザ更新API: 異常系 ログインしていない場合は401エラー"() {

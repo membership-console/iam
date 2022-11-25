@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
-import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.enums.Scope;
 import cc.rits.membership.console.iam.infrastructure.db.entity.Oauth2RegisteredClientExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.OAuth2RegisteredClientMapper;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Repository
-public class ClientRepositoryImpl implements ClientRepository {
+public class ClientRepository implements IClientRepository {
 
     private final OAuth2RegisteredClientMapper oAuth2RegisteredClientMapper;
 

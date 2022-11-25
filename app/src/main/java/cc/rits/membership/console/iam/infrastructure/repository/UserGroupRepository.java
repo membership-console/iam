@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupExample;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRoleExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserGroupMapper;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Repository
-public class UserGroupRepositoryImpl implements UserGroupRepository {
+public class UserGroupRepository implements IUserGroupRepository {
 
     private final UserGroupMapper userGroupMapper;
 
@@ -40,6 +40,10 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Override
     public List<UserGroupModel> selectByIds(final List<Integer> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+
         return this.userGroupMapper.selectByIds(ids).stream() //
             .map(UserGroupModel::new) //
             .collect(Collectors.toList());
@@ -88,12 +92,12 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public void update(UserGroupModel userGroupModel) {
+    public void update(final UserGroupModel userGroupModel) {
         final var userGroup = this.userGroupFactory.createUserGroup(userGroupModel);
         this.userGroupMapper.updateByPrimaryKey(userGroup);
 
         // 既存のロールリストを削除
-        final var userGroupRoleExample = new UserGroupRoleExample();;
+        final var userGroupRoleExample = new UserGroupRoleExample();
         userGroupRoleExample.createCriteria().andUserGroupIdEqualTo(userGroupModel.getId());
         this.userGroupRoleMapper.deleteByExample(userGroupRoleExample);
 

@@ -8,7 +8,7 @@ import cc.rits.membership.console.iam.domain.model.ClientModel;
 /**
  * クライアントリポジトリ
  */
-public interface ClientRepository {
+public interface IClientRepository {
 
     /**
      * クライアントリストを全件取得

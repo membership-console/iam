@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.domain.service.ClientService;
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.enums.Scope;
@@ -27,7 +27,7 @@ public class UpdateClientUseCase {
 
     private final ClientService clientService;
 
-    private final ClientRepository clientRepository;
+    private final IClientRepository clientRepository;
 
     /**
      * Handle UseCase

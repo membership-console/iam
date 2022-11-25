@@ -1,9 +1,9 @@
 package cc.rits.membership.console.iam.domain.service
 
 import cc.rits.membership.console.iam.AbstractSpecification
-import cc.rits.membership.console.iam.domain.repository.ClientRepository
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository
-import cc.rits.membership.console.iam.domain.repository.UserRepository
+import cc.rits.membership.console.iam.domain.repository.IClientRepository
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository
+import cc.rits.membership.console.iam.domain.repository.IUserRepository
 import org.spockframework.spring.SpringBean
 
 /**
@@ -12,12 +12,12 @@ import org.spockframework.spring.SpringBean
 abstract class AbstractService_UT extends AbstractSpecification {
 
     @SpringBean
-    UserRepository userRepository = Mock()
+    IUserRepository userRepository = Mock()
 
     @SpringBean
-    UserGroupRepository userGroupRepository = Mock()
+    IUserGroupRepository userGroupRepository = Mock()
 
     @SpringBean
-    ClientRepository clientRepository = Mock()
+    IClientRepository clientRepository = Mock()
 
 }

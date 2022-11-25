@@ -71,12 +71,12 @@ abstract class AbstractRestController_IT extends AbstractDatabaseSpecification {
     /**
      * ログインユーザのID
      */
-    static final LOGIN_USER_ID = 1
+    static final Integer LOGIN_USER_ID = 1
 
     /**
      * ログインユーザのメールアドレス
      */
-    static final LOGIN_USER_EMAIL = RandomHelper.email()
+    static final String LOGIN_USER_EMAIL = RandomHelper.email()
 
     /**
      * GET request
