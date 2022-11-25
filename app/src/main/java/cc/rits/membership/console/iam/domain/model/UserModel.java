@@ -78,7 +78,7 @@ public class UserModel implements Serializable {
         return this.getUserGroups().stream() //
             .map(UserGroupModel::getRoles) //
             .flatMap(Collection::stream) //
-            .anyMatch(r -> r.canImpersonateOtherRole(role));
+            .anyMatch(role::equals);
     }
 
 }

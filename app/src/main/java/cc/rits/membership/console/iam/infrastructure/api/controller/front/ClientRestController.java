@@ -42,15 +42,12 @@ public class ClientRestController {
     /**
      * クライアントリスト取得API
      *
-     * @param loginUser ログインユーザ
      * @return クライアントリスト
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ClientsResponse getClients( //
-        final UserModel loginUser //
-    ) {
-        final var clients = this.getClientsUseCase.handle(loginUser).stream() //
+    public ClientsResponse getClients() {
+        final var clients = this.getClientsUseCase.handle().stream() //
             .map(ClientResponse::new) //
             .collect(Collectors.toList());
         return new ClientsResponse(clients);

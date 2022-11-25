@@ -55,7 +55,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             .build()
     }
 
-    def "ユーザリスト取得API: 正常系 IAMの閲覧者がユーザリストを取得"() {
+    def "ユーザリスト取得API: 正常系 ユーザリストを取得"() {
         given:
         final user = this.login()
 
@@ -63,18 +63,6 @@ class UserRestController_IT extends AbstractRestController_IT {
         TableHelper.insert sql, "user", {
             id | first_name | last_name | email               | password | entrance_year
             2  | ""         | ""        | "user2@example.com" | ""       | 2000
-        }
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | "グループA"
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
         }
         // @formatter:on
 
@@ -85,15 +73,6 @@ class UserRestController_IT extends AbstractRestController_IT {
         then:
         response.users*.id == [user.id, 2]
         response.users*.email == [user.email, "user2@example.com"]
-    }
-
-    def "ユーザリスト取得API: 異常系 IAMの閲覧者以外は403エラー"() {
-        given:
-        this.login()
-
-        expect:
-        final request = this.getRequest(GET_USERS_PATH)
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
     }
 
     def "ユーザリスト取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -111,12 +90,13 @@ class UserRestController_IT extends AbstractRestController_IT {
             id | name
             1  | "グループA"
             2  | "グループB"
+            3  | "グループC"
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
-            1             | Role.PURCHASE_REQUEST_ADMIN.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         TableHelper.insert sql, "r__user__user_group", {
             user_id | user_group_id
@@ -136,7 +116,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         response.email == user.email
         response.entranceYear == user.entranceYear
         response.userGroups*.id == [1, 2]
-        response.userGroups*.roles == [[Role.IAM_ADMIN.id, Role.PURCHASE_REQUEST_ADMIN.id], [Role.PURCHASE_REQUEST_ADMIN.id]]
+        response.userGroups*.roles == [[Role.IAM_ADMIN.id, Role.PAYMASTER_ADMIN.id], [Role.PAYMASTER_ADMIN.id]]
     }
 
     def "ログインユーザ取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -145,26 +125,14 @@ class UserRestController_IT extends AbstractRestController_IT {
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
-    def "ユーザ取得API: 正常系 IAMの閲覧者がユーザリストを取得"() {
+    def "ユーザ取得API: 正常系 ユーザリストを取得"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
         TableHelper.insert sql, "user", {
             id | first_name | last_name | email               | password | entrance_year
             2  | ""         | ""        | "user2@example.com" | ""       | 2000
-        }
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | "グループA"
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
         }
         // @formatter:on
 
@@ -179,35 +147,11 @@ class UserRestController_IT extends AbstractRestController_IT {
 
     def "ユーザ取得API: 異常系 ユーザが存在しない場合は404エラー"() {
         given:
-        final user = this.login()
-
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | "グループA"
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
+        this.login()
 
         expect:
         final request = this.getRequest(String.format(GET_USER_PATH, 2))
         this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER))
-    }
-
-    def "ユーザ取得API: 異常系 IAMの閲覧者以外は403エラー"() {
-        given:
-        this.login()
-
-        expect:
-        final request = this.getRequest(String.format(GET_USER_PATH, 1))
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
     }
 
     def "ユーザ取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -257,23 +201,7 @@ class UserRestController_IT extends AbstractRestController_IT {
 
     def "ユーザ作成API: 異常系 IAMの管理者以外は403エラー"() {
         given:
-        final user = this.login()
-
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | "1"
-            2  | "2"
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
+        this.login()
 
         expect:
         final request = this.postRequest(CREATE_USER_PATH, this.userCreateRequest)
@@ -433,21 +361,6 @@ class UserRestController_IT extends AbstractRestController_IT {
         given:
         final user = this.login()
 
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
-
         expect:
         final request = this.putRequest(String.format(UPDATE_USER_PATH, user.id), this.userUpdateRequest)
         this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
@@ -593,21 +506,6 @@ class UserRestController_IT extends AbstractRestController_IT {
     def "ユーザ削除API: 異常系 IAMの管理者以外は403エラー"() {
         given:
         final user = this.login()
-
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
 
         expect:
         final request = this.deleteRequest(String.format(DELETE_USER_PATH, user.id))

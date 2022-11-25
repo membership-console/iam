@@ -25,8 +25,8 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
-            1             | Role.PURCHASE_REQUEST_ADMIN.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         // @formatter:on
 
@@ -36,7 +36,7 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         then:
         result*.id == [1, 2]
         result*.name == ["グループA", "グループB"]
-        result*.roles == [[Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN], [Role.PURCHASE_REQUEST_ADMIN]]
+        result*.roles == [[Role.IAM_ADMIN, Role.PAYMASTER_ADMIN], [Role.PAYMASTER_ADMIN]]
     }
 
     def "selectById: IDからユーザグループを取得"() {
@@ -50,8 +50,8 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
-            1             | Role.PURCHASE_REQUEST_ADMIN.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         // @formatter:on
 
@@ -62,7 +62,7 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         result.isPresent()
         result.get().id == 1
         result.get().name == "グループA"
-        result.get().roles == [Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN]
+        result.get().roles == [Role.IAM_ADMIN, Role.PAYMASTER_ADMIN]
     }
 
     def "selectById: 存在しない場合はOptional.empty()を返す"() {
@@ -84,9 +84,9 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-            2             | Role.IAM_ADMIN.id
-            3             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.IAM_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
+            3             | Role.REMINDER_ADMIN.id
         }
         // @formatter:on
 
@@ -96,14 +96,14 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         then:
         result*.id == [1, 2]
         result*.name == ["グループA", "グループB"]
-        result*.roles == [[Role.IAM_VIEWER], [Role.IAM_ADMIN]]
+        result*.roles == [[Role.IAM_ADMIN], [Role.PAYMASTER_ADMIN]]
     }
 
     def "insert: ユーザグループを作成"() {
         given:
         final userGroup = UserGroupModel.builder()
             .name("")
-            .roles([Role.IAM_VIEWER, Role.IAM_ADMIN])
+            .roles([Role.IAM_ADMIN, Role.PAYMASTER_ADMIN])
             .build()
 
         when:
@@ -211,14 +211,14 @@ class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
+            1             | Role.IAM_ADMIN.id
         }
         // @formatter:on
 
         final userGroup = UserGroupModel.builder()
             .id(1)
             .name(RandomHelper.alphanumeric(10))
-            .roles([Role.PURCHASE_REQUEST_VIEWER, Role.PURCHASE_REQUEST_ADMIN])
+            .roles([Role.PAYMASTER_ADMIN, Role.REMINDER_ADMIN])
             .build()
 
         when:

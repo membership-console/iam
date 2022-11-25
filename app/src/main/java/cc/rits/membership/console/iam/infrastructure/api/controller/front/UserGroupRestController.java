@@ -39,15 +39,12 @@ public class UserGroupRestController {
     /**
      * ユーザグループリスト取得API
      *
-     * @param loginUser ログインユーザ
      * @return ユーザグループリスト
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public UserGroupsResponse getUserGroups( //
-        final UserModel loginUser //
-    ) {
-        final var userGroups = this.getUserGroupsUseCase.handle(loginUser).stream() //
+    public UserGroupsResponse getUserGroups() {
+        final var userGroups = this.getUserGroupsUseCase.handle().stream() //
             .map(UserGroupResponse::new) //
             .collect(Collectors.toList());
         return new UserGroupsResponse(userGroups);
@@ -56,17 +53,15 @@ public class UserGroupRestController {
     /**
      * ユーザグループ取得API
      *
-     * @param loginUser ログインユーザ
      * @param userGroupId ユーザグループID
      * @return ユーザグループ
      */
     @GetMapping("/{user_group_id}")
     @ResponseStatus(HttpStatus.OK)
     public UserGroupResponse getUserGroup( //
-        final UserModel loginUser, //
         @PathVariable("user_group_id") final Integer userGroupId //
     ) {
-        return new UserGroupResponse(this.getUserGroupUseCase.handle(loginUser, userGroupId));
+        return new UserGroupResponse(this.getUserGroupUseCase.handle(userGroupId));
     }
 
     /**

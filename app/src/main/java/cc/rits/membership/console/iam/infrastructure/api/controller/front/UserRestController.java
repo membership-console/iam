@@ -42,15 +42,13 @@ public class UserRestController {
 
     /**
      * ユーザリスト取得API
-     *
-     * @param loginUser ログインユーザ
+     * 
+     * @return ユーザリスト
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public UsersResponse getUsers( //
-        final UserModel loginUser //
-    ) {
-        final var users = this.getUsersUseCase.handle(loginUser).stream() //
+    public UsersResponse getUsers() {
+        final var users = this.getUsersUseCase.handle().stream() //
             .map(UserResponse::new) //
             .collect(Collectors.toList());
         return new UsersResponse(users);
@@ -60,6 +58,7 @@ public class UserRestController {
      * ログインユーザ取得API
      *
      * @param loginUser ログインユーザ
+     * @return ログインユーザ
      */
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -72,16 +71,15 @@ public class UserRestController {
     /**
      * ユーザ取得API
      *
-     * @param loginUser ログインユーザ
      * @param userId ユーザID
+     * @return ユーザ
      */
     @GetMapping("/{user_id}")
     @ResponseStatus(HttpStatus.OK)
     public UserResponse getUser( //
-        final UserModel loginUser, //
         @PathVariable("user_id") final Integer userId //
     ) {
-        return new UserResponse(this.getUserUseCase.handle(loginUser, userId));
+        return new UserResponse(this.getUserUseCase.handle(userId));
     }
 
     /**

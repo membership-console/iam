@@ -27,12 +27,12 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
     @Shared
     UserGroupUpsertRequest userGroupUpsertRequest = UserGroupUpsertRequest.builder()
         .name(RandomHelper.alphanumeric(10))
-        .roles([Role.IAM_VIEWER.id, Role.IAM_ADMIN.id])
+        .roles([Role.IAM_ADMIN.id, Role.PAYMASTER_ADMIN.id])
         .build()
 
-    def "ユーザグループリスト取得API: 正常系 IAMの閲覧者がユーザグループリストを取得"() {
+    def "ユーザグループリスト取得API: 正常系 ユーザグループリストを取得"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
         TableHelper.insert sql, "user_group", {
@@ -42,12 +42,9 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
-            1             | role.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
+            1             | Role.IAM_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         // @formatter:on
 
@@ -57,19 +54,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
 
         then:
         response.userGroups*.id == [1, 2]
-        response.userGroups*.roles == [[role.id], [Role.PURCHASE_REQUEST_ADMIN.id]]
-
-        where:
-        role << [Role.IAM_VIEWER, Role.IAM_ADMIN]
-    }
-
-    def "ユーザグループリスト取得API: 異常系 IAMの閲覧者以外は403エラー"() {
-        given:
-        this.login()
-
-        expect:
-        final request = this.getRequest(GET_USER_GROUPS_PATH)
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
+        response.userGroups*.roles == [[Role.IAM_ADMIN.id, Role.PAYMASTER_ADMIN.id], [Role.PAYMASTER_ADMIN.id]]
     }
 
     def "ユーザグループリスト取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -78,22 +63,21 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
-    def "ユーザグループ取得API: 正常系 IAMの閲覧者がユーザグループを取得"() {
+    def "ユーザグループ取得API: 正常系 ユーザグループを取得"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
         TableHelper.insert sql, "user_group", {
             id | name
             1  | "グループA"
+            2  | "グループB"
         }
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
+            1             | Role.IAM_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         // @formatter:on
 
@@ -104,40 +88,23 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         then:
         response.id == 1
         response.name == "グループA"
-        response.roles == [Role.IAM_VIEWER.id]
+        response.roles == [Role.IAM_ADMIN.id, Role.PAYMASTER_ADMIN.id]
     }
 
     def "ユーザグループ取得API: 異常系 ユーザグループが存在しない場合は404エラー"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
         TableHelper.insert sql, "user_group", {
             id | name
             1  | "グループA"
         }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         // @formatter:on
 
         expect:
         final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 2))
         this.execute(request, new NotFoundException(ErrorCode.NOT_FOUND_USER_GROUP))
-    }
-
-    def "ユーザグループ取得API: 異常系 IAMの閲覧者以外は403エラー"() {
-        given:
-        this.login()
-
-        expect:
-        final request = this.getRequest(String.format(GET_USER_GROUP_PATH, 1))
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
     }
 
     def "ユーザグループ取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -175,7 +142,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
 
         final createdUserGroupRoles = sql.rows("SELECT * FROM user_group_role where user_group_id=:user_group_id", [user_group_id: createdUserGroup.id])
         createdUserGroupRoles*.user_group_id == [createdUserGroup.id, createdUserGroup.id]
-        createdUserGroupRoles*.role_id == [Role.IAM_VIEWER.id, Role.IAM_ADMIN.id]
+        createdUserGroupRoles*.role_id == this.userGroupUpsertRequest.roles
     }
 
     def "ユーザグループ作成API: 異常系 不正なリクエストボディ"() {
@@ -207,11 +174,11 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         this.execute(request, new BadRequestException(expectedErrorCode))
 
         where:
-        inputName                      | inputRoles           || expectedErrorCode
-        RandomHelper.alphanumeric(0)   | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
-        RandomHelper.alphanumeric(101) | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
-        RandomHelper.alphanumeric(1)   | []                   || ErrorCode.USER_GROUP_ROLES_MUST_NOT_BE_EMPTY
-        RandomHelper.alphanumeric(1)   | [-1]                 || ErrorCode.INVALID_USER_GROUP_ROLES
+        inputName                      | inputRoles          || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | [Role.IAM_ADMIN.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(101) | [Role.IAM_ADMIN.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(1)   | []                  || ErrorCode.USER_GROUP_ROLES_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(1)   | [-1]                || ErrorCode.INVALID_USER_GROUP_ROLES
     }
 
     def "ユーザグループ作成API: 異常系 ユーザグループ名が既に使われている場合は409エラー"() {
@@ -277,7 +244,7 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
 
         final requestBody = UserGroupUpsertRequest.builder()
             .name(inputName)
-            .roles([Role.PURCHASE_REQUEST_VIEWER.id, Role.PURCHASE_REQUEST_ADMIN.id])
+            .roles([Role.PAYMASTER_ADMIN.id, Role.REMINDER_ADMIN.id])
             .build()
 
         when:
@@ -384,11 +351,11 @@ class UserGroupRestController_IT extends AbstractRestController_IT {
         this.execute(request, new BadRequestException(expectedErrorCode))
 
         where:
-        inputName                      | inputRoles           || expectedErrorCode
-        RandomHelper.alphanumeric(0)   | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
-        RandomHelper.alphanumeric(101) | [Role.IAM_VIEWER.id] || ErrorCode.INVALID_USER_GROUP_NAME
-        RandomHelper.alphanumeric(1)   | []                   || ErrorCode.USER_GROUP_ROLES_MUST_NOT_BE_EMPTY
-        RandomHelper.alphanumeric(1)   | [-1]                 || ErrorCode.INVALID_USER_GROUP_ROLES
+        inputName                      | inputRoles          || expectedErrorCode
+        RandomHelper.alphanumeric(0)   | [Role.IAM_ADMIN.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(101) | [Role.IAM_ADMIN.id] || ErrorCode.INVALID_USER_GROUP_NAME
+        RandomHelper.alphanumeric(1)   | []                  || ErrorCode.USER_GROUP_ROLES_MUST_NOT_BE_EMPTY
+        RandomHelper.alphanumeric(1)   | [-1]                || ErrorCode.INVALID_USER_GROUP_ROLES
     }
 
     def "ユーザグループ更新API: 異常系 ログインしていない場合は401エラー"() {
