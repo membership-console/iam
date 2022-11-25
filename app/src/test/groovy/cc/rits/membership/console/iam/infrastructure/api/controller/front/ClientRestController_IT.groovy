@@ -33,23 +33,11 @@ class ClientRestController_IT extends AbstractRestController_IT {
         .scopes([Scope.USER_READ.name, Scope.EMAIL.name])
         .build()
 
-    def "クライアントリスト取得API: 正常系 IAMの閲覧者がクライアントリストを取得"() {
+    def "クライアントリスト取得API: 正常系 クライアントリストを取得"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
@@ -68,38 +56,17 @@ class ClientRestController_IT extends AbstractRestController_IT {
         response.clients*.scopes == [[Scope.USER_READ.name, Scope.EMAIL.name], [Scope.USER_READ.name]]
     }
 
-    def "クライアントリスト取得API: 正常系 IAMの閲覧者以外は403エラー"() {
-        given:
-        this.login()
-
-        expect:
-        final request = this.getRequest(GET_CLIENTS_PATH)
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
-    }
-
     def "クライアントリスト取得API: 異常系 ログインしていない場合は401エラー"() {
         expect:
         final request = this.getRequest(GET_CLIENTS_PATH)
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
-    def "クライアント取得API: 正常系 IAMの閲覧者がクライアントを取得"() {
+    def "クライアント取得API: 正常系 クライアントを取得"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
@@ -117,32 +84,11 @@ class ClientRestController_IT extends AbstractRestController_IT {
         response.scopes == [Scope.USER_READ.name, Scope.EMAIL.name]
     }
 
-    def "クライアント取得API: 異常系 IAMの閲覧者以外は403エラー"() {
+    def "クライアント取得API: 異常系 クライアントが存在しない場合は404エラー"() {
         given:
         this.login()
 
-        expect:
-        final request = this.getRequest(String.format(GET_CLIENT_PATH, "A"))
-        this.execute(request, new ForbiddenException(ErrorCode.USER_HAS_NO_PERMISSION))
-    }
-
-    def "クライアント取得API: 異常系 クライアントが存在しない場合は404エラー"() {
-        given:
-        final user = this.login()
-
         // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
@@ -193,22 +139,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
 
     def "クライアント作成API: 異常系 IAMの管理者以外は403エラー"() {
         given:
-        final user = this.login()
-
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
+        this.login()
 
         expect:
         final request = this.postRequest(CREATE_CLIENTS_PATH, this.clientUpsertRequest)
@@ -328,21 +259,9 @@ class ClientRestController_IT extends AbstractRestController_IT {
 
     def "クライアント更新API: 異常系 IAMの管理者以外は403エラー"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes                                             | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | [Scope.USER_READ.name, Scope.EMAIL.name].join(",") | ""            | ""                            | ""                        | ""              | ""
@@ -459,22 +378,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
 
     def "クライアント削除API: 異常系 IAMの管理者以外は403エラー"() {
         given:
-        final user = this.login()
-
-        // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
-        // @formatter:on
+        this.login()
 
         expect:
         final request = this.deleteRequest(String.format(DELETE_CLIENTS_PATH, "A"))
@@ -546,21 +450,9 @@ class ClientRestController_IT extends AbstractRestController_IT {
 
     def "クライアント認証情報再発行API: 異常系 IAMの管理者以外は403エラー"() {
         given:
-        final user = this.login()
+        this.login()
 
         // @formatter:off
-        TableHelper.insert sql, "user_group", {
-            id | name
-            1  | ""
-        }
-        TableHelper.insert sql, "user_group_role", {
-            user_group_id | role_id
-            1             | Role.IAM_VIEWER.id
-        }
-        TableHelper.insert sql, "r__user__user_group", {
-            user_id | user_group_id
-            user.id | 1
-        }
         TableHelper.insert sql, "oauth2_registered_client", {
             id  | client_id | client_name | scopes | client_secret | client_authentication_methods | authorization_grant_types | client_settings | token_settings
             "A" | "A"       | "A"         | ""     | ""            | ""                            | ""                        | ""              | ""

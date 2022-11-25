@@ -24,9 +24,9 @@ class UserModel_UT extends AbstractSpecification {
         result == expectedResult
 
         where:
-        role                        || expectedResult
-        Role.IAM_ADMIN              || true
-        Role.PURCHASE_REQUEST_ADMIN || false
+        role                 || expectedResult
+        Role.IAM_ADMIN       || true
+        Role.PAYMASTER_ADMIN || false
     }
 
 }

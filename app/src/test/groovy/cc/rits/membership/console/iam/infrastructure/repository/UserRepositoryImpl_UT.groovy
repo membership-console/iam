@@ -31,8 +31,8 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
-            1             | Role.PURCHASE_REQUEST_ADMIN.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         TableHelper.insert sql, "r__user__user_group", {
             user_id | user_group_id
@@ -53,7 +53,7 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result.get().entranceYear == 2000
         result.get().userGroups*.id == [1, 2]
         result.get().userGroups*.name == ["グループA", "グループB"]
-        result.get().userGroups*.roles == [[Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN], [Role.PURCHASE_REQUEST_ADMIN]]
+        result.get().userGroups*.roles == [[Role.IAM_ADMIN, Role.PAYMASTER_ADMIN], [Role.PAYMASTER_ADMIN]]
     }
 
     def "selectByEmail: 存在しない場合はOptional.empty()を返す"() {
@@ -80,8 +80,8 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         TableHelper.insert sql, "user_group_role", {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
-            1             | Role.PURCHASE_REQUEST_ADMIN.id
-            2             | Role.PURCHASE_REQUEST_ADMIN.id
+            1             | Role.PAYMASTER_ADMIN.id
+            2             | Role.PAYMASTER_ADMIN.id
         }
         TableHelper.insert sql, "r__user__user_group", {
             user_id | user_group_id
@@ -102,7 +102,7 @@ class UserRepositoryImpl_UT extends AbstractRepository_UT {
         result.get().entranceYear == 2000
         result.get().userGroups*.id == [1, 2]
         result.get().userGroups*.name == ["グループA", "グループB"]
-        result.get().userGroups*.roles == [[Role.IAM_ADMIN, Role.PURCHASE_REQUEST_ADMIN], [Role.PURCHASE_REQUEST_ADMIN]]
+        result.get().userGroups*.roles == [[Role.IAM_ADMIN, Role.PAYMASTER_ADMIN], [Role.PAYMASTER_ADMIN]]
     }
 
     def "selectById: 存在しない場合はOptional.empty()を返す"() {
