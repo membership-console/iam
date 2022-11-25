@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.exception.ForbiddenException;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class ReissueCredentialsUseCase {
 
-    private final ClientRepository clientRepository;
+    private final IClientRepository clientRepository;
 
     /**
      * Handle UseCase

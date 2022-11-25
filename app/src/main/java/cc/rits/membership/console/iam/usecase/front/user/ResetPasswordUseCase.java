@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.PasswordResetTokenModel;
-import cc.rits.membership.console.iam.domain.repository.PasswordResetTokenRepository;
-import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.domain.repository.IPasswordResetTokenRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserRepository;
 import cc.rits.membership.console.iam.exception.BadRequestException;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.infrastructure.api.request.PasswordResetRequest;
@@ -19,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class ResetPasswordUseCase {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
 
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final IPasswordResetTokenRepository passwordResetTokenRepository;
 
     private final AuthUtil authUtil;
 

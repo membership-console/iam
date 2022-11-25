@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository;
 import cc.rits.membership.console.iam.domain.service.UserGroupService;
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.exception.ErrorCode;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class CreateUserGroupUseCase {
 
-    private final UserGroupRepository userGroupRepository;
+    private final IUserGroupRepository userGroupRepository;
 
     private final UserGroupService userGroupService;
 

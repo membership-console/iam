@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 /**
  * UserRepositoryの単体テスト
  */
-class UserRepositoryImpl_UT extends AbstractRepository_UT {
+class UserRepository_UT extends AbstractRepository_UT {
 
     @Autowired
-    UserRepositoryImpl sut
+    UserRepository sut
 
     def "selectByEmail: メールアドレスからユーザを取得"() {
         given:

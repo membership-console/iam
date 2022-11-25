@@ -13,7 +13,6 @@ exception:
     invalid_user_last_name: "名は1~255文字にしてください。"
     invalid_user_email: "不正なメールアドレスです。"
     invalid_user_entrance_year: "不正な入学年度は登録できません。"
-    user_groups_must_not_be_empty: "ユーザには1個以上のユーザグループを割り当てる必要があります。"
     requested_email_is_exists: "そのメールアドレスは登録されていません。"
     invalid_password_reset_token: "不正なトークンが指定されました。問題が解決しない場合は、管理者までご連絡ください。"
     invalid_client_name: "OAuthクライアント名は1~100文字にしてください。"

@@ -8,7 +8,7 @@ import cc.rits.membership.console.iam.domain.model.UserModel;
 /**
  * ユーザリポジトリ
  */
-public interface UserRepository {
+public interface IUserRepository {
 
     /**
      * メールアドレスからユーザを取得

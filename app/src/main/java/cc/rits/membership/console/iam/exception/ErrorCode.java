@@ -41,19 +41,17 @@ public enum ErrorCode {
 
     INVALID_USER_ENTRANCE_YEAR(HttpStatus.BAD_REQUEST, 20013, "exception.bad_request.invalid_user_entrance_year"),
 
-    USER_GROUPS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, 20014, "exception.bad_request.user_groups_must_not_be_empty"),
+    REQUESTED_EMAIL_IS_NOT_EXISTS(HttpStatus.BAD_REQUEST, 20014, "exception.bad_request.requested_email_is_exists"),
 
-    REQUESTED_EMAIL_IS_NOT_EXISTS(HttpStatus.BAD_REQUEST, 20015, "exception.bad_request.requested_email_is_exists"),
+    INVALID_PASSWORD_RESET_TOKEN(HttpStatus.BAD_REQUEST, 20015, "exception.bad_request.invalid_password_reset_token"),
 
-    INVALID_PASSWORD_RESET_TOKEN(HttpStatus.BAD_REQUEST, 20016, "exception.bad_request.invalid_password_reset_token"),
+    INVALID_CLIENT_NAME(HttpStatus.BAD_REQUEST, 20016, "exception.bad_request.invalid_client_name"),
 
-    INVALID_CLIENT_NAME(HttpStatus.BAD_REQUEST, 20017, "exception.bad_request.invalid_client_name"),
+    INVALID_CLIENT_SCOPES(HttpStatus.BAD_REQUEST, 20017, "exception.bad_request.invalid_client_scopes"),
 
-    INVALID_CLIENT_SCOPES(HttpStatus.BAD_REQUEST, 20018, "exception.bad_request.invalid_client_scopes"),
+    CLIENT_SCOPES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, 20018, "exception.bad_request.client_scopes_must_not_be_empty"),
 
-    CLIENT_SCOPES_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, 20019, "exception.bad_request.client_scopes_must_not_be_empty"),
-
-    USER_IDS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, 20020, "exception.bad_request.user_ids_must_not_be_empty"),
+    USER_IDS_MUST_NOT_BE_EMPTY(HttpStatus.BAD_REQUEST, 20019, "exception.bad_request.user_ids_must_not_be_empty"),
 
     /**
      * 21000~21999: 401 Unauthorized

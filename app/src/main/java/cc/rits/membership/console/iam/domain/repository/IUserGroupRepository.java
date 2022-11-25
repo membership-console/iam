@@ -8,7 +8,7 @@ import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 /**
  * ユーザグループリポジトリ
  */
-public interface UserGroupRepository {
+public interface IUserGroupRepository {
 
     /**
      * ユーザグループリストを全件取得

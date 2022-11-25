@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IamUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)

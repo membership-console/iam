@@ -10,10 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 /**
  * ClientRepositoryの単体テスト
  */
-class ClientRepositoryImpl_UT extends AbstractRepository_UT {
+class ClientRepository_UT extends AbstractRepository_UT {
 
     @Autowired
-    ClientRepositoryImpl sut
+    ClientRepository sut
 
     @Autowired
     PasswordEncoder passwordEncoder

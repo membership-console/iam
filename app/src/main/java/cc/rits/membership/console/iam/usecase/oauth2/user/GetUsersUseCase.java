@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserRepository;
 import cc.rits.membership.console.iam.enums.Scope;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.exception.ForbiddenException;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class GetUsersUseCase {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
 
     /**
      * Handle UseCase

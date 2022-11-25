@@ -2,7 +2,7 @@ package cc.rits.membership.console.iam.domain.service;
 
 import org.springframework.stereotype.Service;
 
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository;
 import cc.rits.membership.console.iam.exception.ConflictException;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class UserGroupService {
 
-    private final UserGroupRepository userGroupRepository;
+    private final IUserGroupRepository userGroupRepository;
 
     /**
      * ユーザグループ名が使われていないことをチェック

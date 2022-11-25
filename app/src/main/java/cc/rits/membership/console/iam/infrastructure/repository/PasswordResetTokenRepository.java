@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.PasswordResetTokenModel;
-import cc.rits.membership.console.iam.domain.repository.PasswordResetTokenRepository;
+import cc.rits.membership.console.iam.domain.repository.IPasswordResetTokenRepository;
 import cc.rits.membership.console.iam.infrastructure.db.entity.PasswordResetTokenExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.PasswordResetTokenMapper;
 import cc.rits.membership.console.iam.infrastructure.factory.PasswordResetTokenFactory;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Repository
-public class PasswordResetTokenRepositoryImpl implements PasswordResetTokenRepository {
+public class PasswordResetTokenRepository implements IPasswordResetTokenRepository {
 
     private final PasswordResetTokenMapper passwordResetTokenMapper;
 

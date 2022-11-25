@@ -7,7 +7,6 @@
                type="cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRole"
                extends="cc.rits.membership.console.iam.infrastructure.db.mapper.base.UserGroupRoleBaseMapper.BaseResultMap"/>
 
-
     <resultMap id="UserGroupWithRolesResultMap"
                type="cc.rits.membership.console.iam.infrastructure.db.entity.join.UserGroupWithRoles"
                extends="BaseResultMap">
@@ -49,5 +48,4 @@
             #{item}
         </foreach>
     </select>
-
 </mapper>

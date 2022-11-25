@@ -7,7 +7,7 @@ import cc.rits.membership.console.iam.domain.model.PasswordResetTokenModel;
 /**
  * パスワードリセットトークンリポジトリ
  */
-public interface PasswordResetTokenRepository {
+public interface IPasswordResetTokenRepository {
 
     /**
      * パスワードリセットトークンを作成

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired
 /**
  * UserGroupRepositoryの単体テスト
  */
-class UserGroupRepositoryImpl_UT extends AbstractRepository_UT {
+class UserGroupRepository_UT extends AbstractRepository_UT {
 
     @Autowired
-    UserGroupRepositoryImpl sut
+    UserGroupRepository sut
 
     def "selectAll: ユーザグループリストを全件取得"() {
         given:

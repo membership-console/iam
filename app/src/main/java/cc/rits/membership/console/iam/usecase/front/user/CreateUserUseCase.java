@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.UserGroupRepository;
-import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserRepository;
 import cc.rits.membership.console.iam.domain.service.UserService;
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.exception.ErrorCode;
@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class CreateUserUseCase {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
 
-    private final UserGroupRepository userGroupRepository;
+    private final IUserGroupRepository userGroupRepository;
 
     private final UserService userService;
 

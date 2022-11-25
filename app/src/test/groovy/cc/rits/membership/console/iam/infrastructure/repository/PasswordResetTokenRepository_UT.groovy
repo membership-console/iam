@@ -10,10 +10,10 @@ import java.time.LocalDateTime
 /**
  * PasswordResetTokenRepositoryの単体テスト
  */
-class PasswordResetTokenRepositoryImpl_UT extends AbstractRepository_UT {
+class PasswordResetTokenRepository_UT extends AbstractRepository_UT {
 
     @Autowired
-    PasswordResetTokenRepositoryImpl sut
+    PasswordResetTokenRepository sut
 
     def "insert: パスワードリセットトークンを作成"() {
         given:

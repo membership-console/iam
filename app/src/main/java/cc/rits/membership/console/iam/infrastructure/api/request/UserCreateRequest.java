@@ -59,6 +59,7 @@ public class UserCreateRequest implements BaseRequest {
     /**
      * バリデーション
      */
+    @Override
     public void validate() {
         // ファーストネーム
         if (!ValidationUtil.checkStringLength(this.getFirstName(), 1, 255)) {
@@ -82,11 +83,6 @@ public class UserCreateRequest implements BaseRequest {
         final var currentYear = LocalDateTime.now().getYear();
         if (this.getEntranceYear() > currentYear) {
             throw new BadRequestException(ErrorCode.INVALID_USER_ENTRANCE_YEAR);
-        }
-
-        // ユーザグループIDリスト
-        if (this.getUserGroupIds().isEmpty()) {
-            throw new BadRequestException(ErrorCode.USER_GROUPS_MUST_NOT_BE_EMPTY);
         }
     }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.UserRepository;
+import cc.rits.membership.console.iam.domain.repository.IUserRepository;
 import cc.rits.membership.console.iam.infrastructure.db.entity.User;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserExample;
 import cc.rits.membership.console.iam.infrastructure.db.mapper.UserMapper;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepository implements IUserRepository {
 
     private final UserMapper userMapper;
 
@@ -58,10 +58,12 @@ public class UserRepositoryImpl implements UserRepository {
         this.userMapper.insert(user);
 
         // ユーザグループに配属
-        final var userGroupIds = userModel.getUserGroups().stream() //
-            .map(UserGroupModel::getId) //
-            .collect(Collectors.toList());
-        this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+        if (!userModel.getUserGroups().isEmpty()) {
+            final var userGroupIds = userModel.getUserGroups().stream() //
+                .map(UserGroupModel::getId) //
+                .collect(Collectors.toList());
+            this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+        }
     }
 
     @Override
@@ -71,10 +73,12 @@ public class UserRepositoryImpl implements UserRepository {
 
         // 既存のユーザグループ配属情報を削除し、新しいユーザグループリストに再配属する
         this.userMapper.deleteUserToUserGroups(user.getId());
-        final var userGroupIds = userModel.getUserGroups().stream() //
-            .map(UserGroupModel::getId) //
-            .collect(Collectors.toList());
-        this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+        if (!userModel.getUserGroups().isEmpty()) {
+            final var userGroupIds = userModel.getUserGroups().stream() //
+                .map(UserGroupModel::getId) //
+                .collect(Collectors.toList());
+            this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
+        }
     }
 
     @Override

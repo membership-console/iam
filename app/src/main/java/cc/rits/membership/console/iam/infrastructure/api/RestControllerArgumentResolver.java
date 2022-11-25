@@ -15,7 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 import cc.rits.membership.console.iam.domain.model.UserModel;
-import cc.rits.membership.console.iam.domain.repository.ClientRepository;
+import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class RestControllerArgumentResolver implements HandlerMethodArgumentReso
 
     private final UserDetailsService userDetailsService;
 
-    private final ClientRepository clientRepository;
+    private final IClientRepository clientRepository;
 
     @Override
     public boolean supportsParameter(@Nullable final MethodParameter parameter) {
