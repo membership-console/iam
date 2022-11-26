@@ -1,6 +1,5 @@
 package cc.rits.membership.console.iam.domain.service
 
-
 import cc.rits.membership.console.iam.helper.RandomHelper
 import org.springframework.beans.factory.annotation.Autowired
 

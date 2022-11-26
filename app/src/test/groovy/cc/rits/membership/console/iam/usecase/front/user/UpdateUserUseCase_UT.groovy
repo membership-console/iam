@@ -47,7 +47,6 @@ class UpdateUserUseCase_UT extends AbstractUseCase_UT {
 
         final requestBody = RandomHelper.mock(UserUpdateRequest)
 
-
         when:
         this.sut.handle(loginUser, user.id, requestBody)
 
