@@ -1,6 +1,5 @@
 package cc.rits.membership.console.iam.helper
 
-
 import java.time.LocalDateTime
 
 /**

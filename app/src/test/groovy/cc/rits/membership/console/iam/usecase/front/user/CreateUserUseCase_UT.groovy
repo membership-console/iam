@@ -42,7 +42,6 @@ class CreateUserUseCase_UT extends AbstractUseCase_UT {
         final loginUser = Spy(UserModel)
         final requestBody = RandomHelper.mock(UserCreateRequest)
 
-
         when:
         this.sut.handle(loginUser, requestBody)
 

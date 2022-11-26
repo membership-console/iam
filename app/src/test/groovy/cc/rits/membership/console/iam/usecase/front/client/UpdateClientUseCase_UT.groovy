@@ -66,7 +66,6 @@ class UpdateClientUseCase_UT extends AbstractUseCase_UT {
         when:
         this.sut.handle(loginUser, client.id, requestBody)
 
-
         then:
         noExceptionThrown()
         1 * loginUser.hasRole(Role.IAM_ADMIN) >> true

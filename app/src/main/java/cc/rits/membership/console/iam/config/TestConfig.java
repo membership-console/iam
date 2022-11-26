@@ -1,9 +1,14 @@
 package cc.rits.membership.console.iam.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TestConfig {
 
+    private final DataSourceProperties dataSourceProperties;
+
     @Bean
     public FlywayMigrationStrategy flywayMigrationStrategy() {
         return flyway -> {
@@ -22,6 +29,19 @@ public class TestConfig {
             flyway.clean();
             flyway.migrate();
         };
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        // アプリケーション/テストで実行されるトランザクションを1つにまとめる
+        return new TransactionAwareDataSourceProxy( //
+            DataSourceBuilder.create() //
+                .username(this.dataSourceProperties.getUsername()) //
+                .password(this.dataSourceProperties.getPassword()) //
+                .url(this.dataSourceProperties.getUrl()) //
+                .driverClassName(this.dataSourceProperties.getDriverClassName()) //
+                .build() //
+        );
     }
 
 }
