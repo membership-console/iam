@@ -48,27 +48,21 @@ ext {
     PROPERTY_ROOT_PATH = "${rootProject.rootDir.path}/${RESOURCES_ROOT_PATH}"
     GRADLE_ROOT_PATH = "../gradle"
 
-    // application property file
-    BASE_PROPERTY_FILE = "application.yml"
-    ENVIRONMENT = System.getProperty("spring.profiles.active") ?: "local"
-    EXTENSION_PROPERTY_FILE = "application-${ENVIRONMENT}.yml"
-
-    // application property
-    BASE_PROPERTY = new Yaml().load(new File("${PROPERTY_ROOT_PATH}/${BASE_PROPERTY_FILE}").newInputStream())
-    EXTENSION_PROPERTY = new Yaml().load(new File("${PROPERTY_ROOT_PATH}/${EXTENSION_PROPERTY_FILE}").newInputStream())
+    // application properties
+    APPLICATION_PROPERTIES = new Yaml().load(new File("${PROPERTY_ROOT_PATH}/application.yml").newInputStream())
 
     // application info
-    APPLICATION_NAME = BASE_PROPERTY.project.name
-    APPLICATION_VERSION = BASE_PROPERTY.project.version
+    APPLICATION_NAME = APPLICATION_PROPERTIES.project.name
+    APPLICATION_VERSION = APPLICATION_PROPERTIES.project.version
 
     // datasource
-    DATASOURCE_URL = EXTENSION_PROPERTY.spring.datasource.url
-    DATASOURCE_USERNAME = EXTENSION_PROPERTY.spring.datasource.username
-    DATASOURCE_PASSWORD = EXTENSION_PROPERTY.spring.datasource.password
-    DATASOURCE_DRIVER = EXTENSION_PROPERTY.spring.datasource["driver-class-name"]
+    DATASOURCE_URL = APPLICATION_PROPERTIES.spring.datasource.url
+    DATASOURCE_USERNAME = APPLICATION_PROPERTIES.spring.datasource.username
+    DATASOURCE_PASSWORD = APPLICATION_PROPERTIES.spring.datasource.password
+    DATASOURCE_DRIVER = APPLICATION_PROPERTIES.spring.datasource["driver-class-name"]
 
     // mybatis
-    MYBATIS_PROPERTY = BASE_PROPERTY.project.mybatis
+    MYBATIS_PROPERTY = APPLICATION_PROPERTIES.project.mybatis
 }
 
 dependencies {

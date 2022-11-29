@@ -1,11 +1,12 @@
 # IAM
 
 ![CI](https://github.com/membership-console/membership-console-iam/workflows/CI/badge.svg)
-![version](https://img.shields.io/badge/version-1.0.0__SNAPSHOT-blue.svg)
+![CI](https://github.com/membership-console/membership-console-iam/workflows/Build/badge.svg)
+![version](https://img.shields.io/badge/version-1.0.0--SNAPSHOT-blue.svg)
 
 ## 概要
 
-本プロジェクトはMembership ConsoleのIAM機能を提供します。
+本プロジェクトは Membership Console の IAM 機能を提供します。
 
 ## 開発
 
@@ -34,33 +35,45 @@ $ docker compose up -d
 # 3307 db-test:  テスト用データベース
 ```
 
-デフォルトで使用されるポート番号は`8081`です。`-Dserver.port=XXXX`オプションを付けることでポート番号を変更できます。
+デフォルトで使用されるポート番号は`8080`です。
 
 ```sh
 # 1. run .jar file
-# -Dspring.profiles.activeを指定しない場合はlocalになる
-$ java -jar iam-<version>.jar  # -Dspring.profiles.active=<environment>
+$ java -jar iam-<version>.jar
 
 # 2. run on dev environment
 $ ./gradlew bootRun
 ```
 
-### DBマイグレーションとコード生成
+### 環境変数
 
-DBマイグレーションとORMには下記ツールを利用しています。
+| 変数名           | 型      | デフォルト値                                                                                          | 概要                                    |
+| ---------------- | ------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| PORT             | Integer | 8080                                                                                                  | アプリケーションのポート番号            |
+| MYSQL_URL        | String  | jdbc:mysql://localhost:3306/iam?useSSL=false&allowPublicKeyRetrieval=true&enabledTLSProtocols=TLSv1.2 | MySQL の URL                            |
+| MYSQL_USERNAME   | String  | iam                                                                                                   | MySQL のユーザ名                        |
+| MYSQL_PASSWORD   | String  | iam                                                                                                   | MySQL のパスワード                      |
+| APPLICATION_URL  | String  | http://localhost:4200                                                                                 | アプリケーションの URL                  |
+| SENDGRID_ENABLED | Boolean | false                                                                                                 | SendGrid を有効化するか                 |
+| SENDGRID_API_KEY | String  |                                                                                                       | SendGrid の API キー                    |
+| SENDGRID_EMAIL   | String  |                                                                                                       | SendGrid 送信するメールの送信元アドレス |
 
-* Flyway: DBマイグレーションツール
-* MyBatis: ORMフレームワーク
+### DB マイグレーションとコード生成
 
-#### DBマイグレーション
+DB マイグレーションと ORM には下記ツールを利用しています。
 
-`flywayMigrate`タスクでDBマイグレーションを実行できます。
+- Flyway: DB マイグレーションツール
+- MyBatis: ORM フレームワーク
+
+#### DB マイグレーション
+
+`flywayMigrate`タスクで DB マイグレーションを実行できます。
 
 ```sh
 $ ./gradlew flywayMigrate
 ```
 
-Flywayはマイグレーションファイルのチェックサムを`flyway_schema_history`テーブルに保存することで、過去のマイグレーションファイルが書き換えられることを防いでいます。
+Flyway はマイグレーションファイルのチェックサムを`flyway_schema_history`テーブルに保存することで、過去のマイグレーションファイルが書き換えられることを防いでいます。
 
 しかしながら、開発中は書き換えたくなることもあるでしょう。その場合は、下記コマンドで歴史を消すことが可能です。クリーンが完了したら、再度マイグレーションコマンドを実行してください。
 
@@ -68,9 +81,9 @@ Flywayはマイグレーションファイルのチェックサムを`flyway_sch
 $ ./gradlew flywayClean
 ```
 
-#### MyBatisでコード生成
+#### MyBatis でコード生成
 
-下記コマンドで、DBからEntityファイルを生成できます。
+下記コマンドで、DB から Entity ファイルを生成できます。
 
 ```sh
 $ ./gradlew mbGenerate
@@ -78,9 +91,10 @@ $ ./gradlew mbGenerate
 
 ### 依存関係のアップデート
 
-[Gradle Versions Plugin](https://github.com/ben-manes/gradle-versions-plugin)を使って、outdatedな依存関係をアップデートします。
+[Gradle Versions Plugin](https://github.com/ben-manes/gradle-versions-plugin)を使って、outdated な依存関係をアップデートします。
 
 下記コマンドの実行後、出力されたレポートに従って[build.gradle](./app/build.gradle)に記載されたバージョンを書き換えてください。
 
 ```sh
 $ ./gradlew dependencyUpdates -Drevision=release
+```

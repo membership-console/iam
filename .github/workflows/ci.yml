@@ -25,10 +25,6 @@ jobs:
       - name: launch docker
         run: docker compose up -d
 
-      - name: build
-        run: |
-          ./gradlew bootJar
-
       - name: test
         run: |
           ./gradlew test
