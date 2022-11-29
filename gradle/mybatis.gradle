@@ -1,7 +1,7 @@
 ext {
     MYBATIS_CONFIG_FILE = MYBATIS_PROPERTY.config.file
-    MYBATIS_MODEL_PACKAGE = "${BASE_PROPERTY.project.package}.${MYBATIS_PROPERTY.model.package}"
-    MYBATIS_CLIENT_PACKAGE = "${BASE_PROPERTY.project.package}.${MYBATIS_PROPERTY.client.package}"
+    MYBATIS_MODEL_PACKAGE = "${APPLICATION_PROPERTIES.project.package}.${MYBATIS_PROPERTY.model.package}"
+    MYBATIS_CLIENT_PACKAGE = "${APPLICATION_PROPERTIES.project.package}.${MYBATIS_PROPERTY.client.package}"
     MYBATIS_MAP_PACKAGE = "${MYBATIS_PROPERTY.map.package}"
 }
 

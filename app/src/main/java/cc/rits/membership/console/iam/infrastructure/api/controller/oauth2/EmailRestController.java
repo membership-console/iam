@@ -25,7 +25,7 @@ public class EmailRestController {
     private final SendEmailUseCase sendEmailUseCase;
 
     /**
-     * メール送信取得API
+     * メール送信API
      * 
      * @param loginClient ログインクライアント
      * @param requestBody メール送信リクエスト
