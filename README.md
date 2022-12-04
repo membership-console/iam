@@ -1,7 +1,7 @@
 # IAM
 
-![CI](https://github.com/membership-console/membership-console-iam/workflows/CI/badge.svg)
-![Build](https://github.com/membership-console/membership-console-iam/workflows/Build/badge.svg)
+![CI](https://github.com/membership-console/iam/workflows/CI/badge.svg)
+![Build](https://github.com/membership-console/iam/workflows/Build/badge.svg)
 ![version](https://img.shields.io/badge/version-1.0.0--SNAPSHOT-blue.svg)
 
 ## 概要
@@ -44,19 +44,6 @@ $ java -jar iam-<version>.jar
 # 2. run on dev environment
 $ ./gradlew bootRun
 ```
-
-### 環境変数
-
-| 変数名           | 型      | デフォルト値                                                                                          | 概要                                    |
-| ---------------- | ------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| PORT             | Integer | 8080                                                                                                  | アプリケーションのポート番号            |
-| MYSQL_URL        | String  | jdbc:mysql://localhost:3306/iam?useSSL=false&allowPublicKeyRetrieval=true&enabledTLSProtocols=TLSv1.2 | MySQL の URL                            |
-| MYSQL_USERNAME   | String  | iam                                                                                                   | MySQL のユーザ名                        |
-| MYSQL_PASSWORD   | String  | iam                                                                                                   | MySQL のパスワード                      |
-| APPLICATION_URL  | String  | http://localhost:4200                                                                                 | アプリケーションの URL                  |
-| SENDGRID_ENABLED | Boolean | false                                                                                                 | SendGrid を有効化するか                 |
-| SENDGRID_API_KEY | String  |                                                                                                       | SendGrid の API キー                    |
-| SENDGRID_EMAIL   | String  |                                                                                                       | SendGrid 送信するメールの送信元アドレス |
 
 ### DB マイグレーションとコード生成
 
