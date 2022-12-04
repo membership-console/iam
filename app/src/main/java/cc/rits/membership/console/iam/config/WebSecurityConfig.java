@@ -5,13 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
-import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import cc.rits.membership.console.iam.config.auth.ClientAuthenticationEntryPoint;
 import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider;
@@ -66,11 +62,6 @@ public class WebSecurityConfig {
             .and().authenticationEntryPoint(this.clientAuthenticationEntryPoint);
 
         return http.build();
-    }
-
-    @Bean
-    public <S extends Session> SessionRegistry sessionRegistry(final FindByIndexNameSessionRepository<S> sessionRepository) {
-        return new SpringSessionBackedSessionRegistry<>(sessionRepository);
     }
 
     @Bean

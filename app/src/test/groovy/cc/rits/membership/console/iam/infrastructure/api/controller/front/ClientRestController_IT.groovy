@@ -119,7 +119,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -159,7 +159,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -195,7 +195,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -229,7 +229,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -286,7 +286,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -310,7 +310,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -356,7 +356,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -398,7 +398,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -428,7 +428,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -477,7 +477,7 @@ class ClientRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
