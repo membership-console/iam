@@ -34,7 +34,7 @@ class UserRepository_UT extends AbstractRepository_UT {
             1             | Role.PAYMASTER_ADMIN.id
             2             | Role.PAYMASTER_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             1       | 1
             1       | 2
@@ -83,7 +83,7 @@ class UserRepository_UT extends AbstractRepository_UT {
             1             | Role.PAYMASTER_ADMIN.id
             2             | Role.PAYMASTER_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             1       | 1
             1       | 2
@@ -181,9 +181,9 @@ class UserRepository_UT extends AbstractRepository_UT {
         createdUser.password == user.password
         createdUser.entrance_year == user.entranceYear
 
-        final created_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
-        created_r__user__user_group_list*.user_id == user.userGroups.collect { createdUser.id }
-        created_r__user__user_group_list*.user_group_id == user.userGroups*.id
+        final created_r_user_group_user_list = sql.rows("SELECT * FROM r_user_group_user")
+        created_r_user_group_user_list*.user_id == user.userGroups.collect { createdUser.id }
+        created_r_user_group_user_list*.user_group_id == user.userGroups*.id
     }
 
     def "update: ユーザを更新"() {
@@ -199,7 +199,7 @@ class UserRepository_UT extends AbstractRepository_UT {
             2  | "継続して所属するグループ"
             3  | "新規所属するグループ"
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             1       | 1
             1       | 2
@@ -228,9 +228,9 @@ class UserRepository_UT extends AbstractRepository_UT {
         updatedUser.password == user.password
         updatedUser.entrance_year == user.entranceYear
 
-        final updated_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
-        updated_r__user__user_group_list*.user_id == user.userGroups.collect { updatedUser.id }
-        updated_r__user__user_group_list*.user_group_id == user.userGroups*.id
+        final updated_r_user_group_user_list = sql.rows("SELECT * FROM r_user_group_user")
+        updated_r_user_group_user_list*.user_id == user.userGroups.collect { updatedUser.id }
+        updated_r_user_group_user_list*.user_group_id == user.userGroups*.id
     }
 
     def "deleteById: IDからユーザを削除"() {
@@ -306,7 +306,7 @@ class UserRepository_UT extends AbstractRepository_UT {
             1  | "A"
             2  | "B"
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             1       | 1
             2       | 1

@@ -24,9 +24,9 @@
                         user_group_role.role_id       AS user_group__role__role_id
 
         FROM user
-                 LEFT JOIN r__user__user_group ON r__user__user_group.user_id = user.id
+                 LEFT JOIN r_user_group_user ON r_user_group_user.user_id = user.id
                  LEFT JOIN user_group
-                           ON user_group.id = r__user__user_group.user_group_id
+                           ON user_group.id = r_user_group_user.user_group_id
                  LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
         WHERE user.email = #{email}
     </select>
@@ -41,9 +41,9 @@
                         user_group_role.role_id       AS user_group__role__role_id
 
         FROM user
-                 LEFT JOIN r__user__user_group ON r__user__user_group.user_id = user.id
+                 LEFT JOIN r_user_group_user ON r_user_group_user.user_id = user.id
                  LEFT JOIN user_group
-                           ON user_group.id = r__user__user_group.user_group_id
+                           ON user_group.id = r_user_group_user.user_group_id
                  LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
         WHERE user.id = #{id}
     </select>
@@ -58,9 +58,9 @@
                         user_group_role.role_id       AS user_group__role__role_id
 
         FROM user
-                 LEFT JOIN r__user__user_group ON r__user__user_group.user_id = user.id
+                 LEFT JOIN r_user_group_user ON r_user_group_user.user_id = user.id
                  LEFT JOIN user_group
-                           ON user_group.id = r__user__user_group.user_group_id
+                           ON user_group.id = r_user_group_user.user_group_id
                  LEFT JOIN user_group_role ON user_group_role.user_group_id = user_group.id
     </select>
 
@@ -68,8 +68,8 @@
         SELECT COUNT(*)
 
         FROM user
-                 LEFT JOIN r__user__user_group ON r__user__user_group.user_id = user.id
-        WHERE r__user__user_group.user_group_id = #{userGroupId}
+                 LEFT JOIN r_user_group_user ON r_user_group_user.user_id = user.id
+        WHERE r_user_group_user.user_group_id = #{userGroupId}
     </select>
 
     <update id="updatePasswordById">
@@ -79,7 +79,7 @@
     </update>
 
     <insert id="addUserToUserGroups">
-        INSERT INTO r__user__user_group (user_id, user_group_id)
+        INSERT INTO r_user_group_user (user_id, user_group_id)
         VALUES
         <foreach item="userGroupId" collection="userGroupIds" separator=",">
             (#{userId}, #{userGroupId})
@@ -88,7 +88,7 @@
 
     <delete id="deleteUserToUserGroups">
         DELETE
-        FROM r__user__user_group
+        FROM r_user_group_user
         WHERE user_id = #{id}
     </delete>
 

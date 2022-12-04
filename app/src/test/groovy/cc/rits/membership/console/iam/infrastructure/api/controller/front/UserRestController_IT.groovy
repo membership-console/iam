@@ -98,7 +98,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             1             | Role.PAYMASTER_ADMIN.id
             2             | Role.PAYMASTER_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
             user.id | 2
@@ -174,7 +174,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -194,9 +194,9 @@ class UserRestController_IT extends AbstractRestController_IT {
         createdUser.entrance_year == this.userCreateRequest.entranceYear
         this.authUtil.isMatchPasswordAndHash(this.userCreateRequest.password, createdUser.password as String)
 
-        final created_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group WHERE user_id = :user_id", [user_id: createdUser.id])
-        created_r__user__user_group_list*.user_id == this.userCreateRequest.userGroupIds.collect { createdUser.id }
-        created_r__user__user_group_list*.user_group_id == this.userCreateRequest.userGroupIds
+        final created_r_user_group_user_list = sql.rows("SELECT * FROM r_user_group_user WHERE user_id = :user_id", [user_id: createdUser.id])
+        created_r_user_group_user_list*.user_id == this.userCreateRequest.userGroupIds.collect { createdUser.id }
+        created_r_user_group_user_list*.user_group_id == this.userCreateRequest.userGroupIds
 
         where:
         inputUserGroupIds << [
@@ -227,7 +227,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -253,7 +253,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -280,7 +280,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -329,7 +329,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             2  | "継続して所属するグループ"
             3  | "新規所属するグループ"
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             1       | 1
             1       | 2
@@ -354,9 +354,9 @@ class UserRestController_IT extends AbstractRestController_IT {
         updatedUser.email == this.userUpdateRequest.email
         updatedUser.entrance_year == this.userUpdateRequest.entranceYear
 
-        final updated_r__user__user_group_list = sql.rows("SELECT * FROM r__user__user_group")
-        updated_r__user__user_group_list*.user_id == this.userUpdateRequest.userGroupIds.collect { updatedUser.id }
-        updated_r__user__user_group_list*.user_group_id == this.userUpdateRequest.userGroupIds
+        final updated_r_user_group_user_list = sql.rows("SELECT * FROM r_user_group_user")
+        updated_r_user_group_user_list*.user_id == this.userUpdateRequest.userGroupIds.collect { updatedUser.id }
+        updated_r_user_group_user_list*.user_group_id == this.userUpdateRequest.userGroupIds
 
         where:
         inputEmail                   | inputUserGroupIds
@@ -387,7 +387,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -422,7 +422,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -448,7 +448,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -495,7 +495,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }
@@ -532,7 +532,7 @@ class UserRestController_IT extends AbstractRestController_IT {
             user_group_id | role_id
             1             | Role.IAM_ADMIN.id
         }
-        TableHelper.insert sql, "r__user__user_group", {
+        TableHelper.insert sql, "r_user_group_user", {
             user_id | user_group_id
             user.id | 1
         }

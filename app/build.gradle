@@ -84,9 +84,6 @@ dependencies {
     implementation "org.springframework.security:spring-security-oauth2-authorization-server:0.3.1"
     testImplementation "org.springframework.security:spring-security-test:5.7.2"
 
-    // spring session
-    implementation "org.springframework.session:spring-session-jdbc:2.7.0"
-
     // flyway
     implementation "org.flywaydb:flyway-core:8.5.13"
     implementation "org.flywaydb:flyway-mysql:8.5.13"
