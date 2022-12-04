@@ -56,10 +56,10 @@ ext {
     APPLICATION_VERSION = APPLICATION_PROPERTIES.project.version
 
     // datasource
-    DATASOURCE_URL = APPLICATION_PROPERTIES.spring.datasource.url
-    DATASOURCE_USERNAME = APPLICATION_PROPERTIES.spring.datasource.username
-    DATASOURCE_PASSWORD = APPLICATION_PROPERTIES.spring.datasource.password
-    DATASOURCE_DRIVER = APPLICATION_PROPERTIES.spring.datasource["driver-class-name"]
+    DATASOURCE_URL = "jdbc:mysql://localhost:3306/iam"
+    DATASOURCE_USERNAME = "iam"
+    DATASOURCE_PASSWORD = "iam"
+    DATASOURCE_DRIVER = "com.mysql.cj.jdbc.Driver"
 
     // mybatis
     MYBATIS_PROPERTY = APPLICATION_PROPERTIES.project.mybatis
