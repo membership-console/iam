@@ -18,7 +18,7 @@ public class RequestPasswordResetRequest implements BaseRequest {
     /**
      * メールアドレス
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String email;
 
     /**

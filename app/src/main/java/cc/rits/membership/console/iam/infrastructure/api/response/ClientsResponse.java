@@ -20,7 +20,7 @@ public class ClientsResponse {
     /**
      * クライアントリストレスポンス
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<ClientResponse> clients;
 
 }

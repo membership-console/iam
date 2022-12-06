@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -35,7 +34,7 @@ public class ClientRepository implements IClientRepository {
         final var example = new Oauth2RegisteredClientExample();
         return this.oAuth2RegisteredClientMapper.selectByExample(example).stream() //
             .map(ClientModel::new) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class ClientRepository implements IClientRepository {
     public void updateNameAndScopes(final ClientModel clientModel) {
         final var scopes = clientModel.getScopes().stream() //
             .map(Scope::getName) //
-            .collect(Collectors.toList());
+            .toList();
         this.oAuth2RegisteredClientMapper.updateClientNameAndScopesById(clientModel.getId(), clientModel.getName(),
             String.join(",", scopes));
     }

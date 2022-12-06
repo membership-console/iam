@@ -22,38 +22,38 @@ public class UserCreateRequest implements BaseRequest {
     /**
      * ファーストネーム
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String firstName;
 
     /**
      * ラストネーム
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String lastName;
 
     /**
      * メールアドレス
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String email;
 
     /**
      * パスワード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String password;
 
     /**
      * 入学年度
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     Integer entranceYear;
 
     /**
      * ユーザグループIDリスト
      */
     @Singular
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<Integer> userGroupIds;
 
     /**

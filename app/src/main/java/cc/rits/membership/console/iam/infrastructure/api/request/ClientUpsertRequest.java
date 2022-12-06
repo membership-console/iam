@@ -22,14 +22,14 @@ public class ClientUpsertRequest implements BaseRequest {
     /**
      * クライアント名
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String name;
 
     /**
      * スコープリスト
      */
     @Singular
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<String> scopes;
 
     /**

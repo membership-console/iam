@@ -22,14 +22,14 @@ public class UserGroupUpsertRequest implements BaseRequest {
     /**
      * ユーザグループ名
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String name;
 
     /**
      * ロールリスト
      */
     @Singular
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<Integer> roles;
 
     /**

@@ -117,6 +117,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         response.entranceYear == user.entranceYear
         response.userGroups*.id == [1, 2]
         response.userGroups*.roles == [[Role.IAM_ADMIN.id, Role.PAYMASTER_ADMIN.id], [Role.PAYMASTER_ADMIN.id]]
+        response.roles == [Role.IAM_ADMIN, Role.PAYMASTER_ADMIN]
     }
 
     def "ログインユーザ取得API: 異常系 ログインしていない場合は401エラー"() {
@@ -125,7 +126,7 @@ class UserRestController_IT extends AbstractRestController_IT {
         this.execute(request, new UnauthorizedException(ErrorCode.USER_NOT_LOGGED_IN))
     }
 
-    def "ユーザ取得API: 正常系 ユーザリストを取得"() {
+    def "ユーザ取得API: 正常系 ユーザを取得"() {
         given:
         this.login()
 

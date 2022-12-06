@@ -19,13 +19,13 @@ public class PasswordResetRequest implements BaseRequest {
     /**
      * 新しいパスワード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String newPassword;
 
     /**
      * トークン
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String token;
 
     /**

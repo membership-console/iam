@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.domain.model;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 
@@ -59,7 +58,7 @@ public class ClientModel implements Serializable {
             .map(Scope::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**

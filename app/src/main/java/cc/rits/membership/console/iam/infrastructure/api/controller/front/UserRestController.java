@@ -1,7 +1,5 @@
 package cc.rits.membership.console.iam.infrastructure.api.controller.front;
 
-import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +48,7 @@ public class UserRestController {
     public UsersResponse getUsers() {
         final var users = this.getUsersUseCase.handle().stream() //
             .map(UserResponse::new) //
-            .collect(Collectors.toList());
+            .toList();
         return new UsersResponse(users);
     }
 

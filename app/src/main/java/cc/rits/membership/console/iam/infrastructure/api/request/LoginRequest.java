@@ -18,13 +18,13 @@ public class LoginRequest implements BaseRequest {
     /**
      * メールアドレス
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String email;
 
     /**
      * パスワード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String password;
 
     /**

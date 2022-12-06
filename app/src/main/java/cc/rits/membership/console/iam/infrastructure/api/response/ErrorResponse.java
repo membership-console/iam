@@ -18,13 +18,13 @@ public class ErrorResponse {
     /**
      * エラーメッセージ
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String message;
 
     /**
      * エラーコード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     Integer code;
 
 }

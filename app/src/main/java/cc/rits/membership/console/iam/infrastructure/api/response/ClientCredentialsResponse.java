@@ -19,13 +19,13 @@ public class ClientCredentialsResponse {
     /**
      * クライアントID
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String clientId;
 
     /**
      * クライアントシークレット
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String clientSecret;
 
     public ClientCredentialsResponse(final ClientModel clientModel) {
