@@ -6,3 +6,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 1
+  flyway:
+    enabled: true
+    clean-disabled: false

@@ -2,7 +2,8 @@ import org.yaml.snakeyaml.Yaml
 
 buildscript {
     ext {
-        SPRING_BOOT_VERSION = "2.7.1"
+        SPRING_BOOT_VERSION = "3.0.0"
+        SPRING_SECURITY_VERSION = "6.0.0"
     }
     repositories {
         mavenCentral()
@@ -10,11 +11,11 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_VERSION}"
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.12.RELEASE"
-        classpath "org.flywaydb:flyway-gradle-plugin:8.5.13"
-        classpath "org.flywaydb:flyway-mysql:8.5.13"
-        classpath "org.yaml:snakeyaml:1.30"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.42.0"
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.0"
+        classpath "org.flywaydb:flyway-gradle-plugin:9.8.3"
+        classpath "org.flywaydb:flyway-mysql:9.8.3"
+        classpath "org.yaml:snakeyaml:1.33"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.44.0"
     }
 }
 
@@ -28,8 +29,8 @@ apply plugin: "eclipse"
 apply plugin: "idea"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -68,25 +69,26 @@ ext {
 dependencies {
     // spring boot
     implementation "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
-    implementation "org.springframework.boot:spring-boot-starter-websocket:${SPRING_BOOT_VERSION}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${SPRING_BOOT_VERSION}"
     implementation "org.springframework.boot:spring-boot-starter-security:${SPRING_BOOT_VERSION}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${SPRING_BOOT_VERSION}"
 
     // spring security
-    implementation "org.springframework.security:spring-security-core:5.7.2"
-    implementation "org.springframework.security:spring-security-web:5.7.2"
-    implementation "org.springframework.security:spring-security-config:5.7.2"
-    implementation "org.springframework.security:spring-security-oauth2-resource-server:5.7.2"
-    implementation "org.springframework.security:spring-security-oauth2-jose:5.7.2"
-    implementation "org.springframework.security:spring-security-oauth2-client:5.7.2"
-    implementation "org.springframework.security:spring-security-oauth2-authorization-server:0.3.1"
-    testImplementation "org.springframework.security:spring-security-test:5.7.2"
+    implementation "org.springframework.security:spring-security-core:${SPRING_SECURITY_VERSION}"
+    implementation "org.springframework.security:spring-security-web:${SPRING_SECURITY_VERSION}"
+    implementation "org.springframework.security:spring-security-config:${SPRING_SECURITY_VERSION}"
+    implementation "org.springframework.security:spring-security-oauth2-resource-server:${SPRING_SECURITY_VERSION}"
+    implementation "org.springframework.security:spring-security-oauth2-jose:${SPRING_SECURITY_VERSION}"
+    implementation "org.springframework.security:spring-security-oauth2-authorization-server:1.0.0"
+    testImplementation "org.springframework.security:spring-security-test:${SPRING_SECURITY_VERSION}"
+
+    // spring session
+    implementation "org.springframework.session:spring-session-jdbc:3.0.0"
 
     // flyway
-    implementation "org.flywaydb:flyway-core:8.5.13"
-    implementation "org.flywaydb:flyway-mysql:8.5.13"
+    implementation "org.flywaydb:flyway-core:9.8.3"
+    implementation "org.flywaydb:flyway-mysql:9.8.3"
 
     // lombok
     implementation "org.projectlombok:lombok:1.18.24"
@@ -95,41 +97,39 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.24"
 
     // mybatis
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${SPRING_BOOT_VERSION}"
     implementation "org.mybatis.generator:mybatis-generator-maven-plugin:1.4.1"
     mybatisGenerate "org.mybatis.generator:mybatis-generator-core:1.4.1"
     mybatisGenerate "com.softwareloop:mybatis-generator-lombok-plugin:1.0"
-    mybatisGenerate "mysql:mysql-connector-java:8.0.29"
+    mybatisGenerate "mysql:mysql-connector-java:8.0.31"
 
     // mysql
-    implementation "mysql:mysql-connector-java:8.0.29"
+    implementation "mysql:mysql-connector-java:8.0.31"
 
     // SendGrid
     implementation "com.sendgrid:sendgrid-java:4.9.3"
 
     // swagger
-    implementation "io.springfox:springfox-boot-starter:3.0.0"
-    implementation "org.springdoc:springdoc-openapi-ui:1.6.9"
-    implementation "org.springdoc:springdoc-openapi-javadoc:1.6.9"
-    implementation "org.springdoc:springdoc-openapi-security:1.6.9"
-    implementation "com.github.therapi:therapi-runtime-javadoc:0.13.0"
-    annotationProcessor "com.github.therapi:therapi-runtime-javadoc-scribe:0.13.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0"
+    implementation "org.springdoc:springdoc-openapi-starter-common:2.0.0"
+    implementation "com.github.therapi:therapi-runtime-javadoc:0.15.0"
+    annotationProcessor "com.github.therapi:therapi-runtime-javadoc-scribe:0.15.0"
 
     // test
-    testImplementation "org.spockframework:spock-core:2.2-M1-groovy-4.0"
-    testImplementation "org.spockframework:spock-spring:2.2-M1-groovy-4.0"
+    testImplementation "org.spockframework:spock-core:2.4-M1-groovy-4.0"
+    testImplementation "org.spockframework:spock-spring:2.4-M1-groovy-4.0"
     testImplementation "org.jeasy:easy-random-core:5.0.0"
-    testImplementation "org.apache.groovy:groovy:4.0.3"
-    testImplementation "org.apache.groovy:groovy-sql:4.0.3"
+    testImplementation "org.apache.groovy:groovy:4.0.6"
+    testImplementation "org.apache.groovy:groovy-sql:4.0.6"
 
     // logging
-    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "ch.qos.logback:logback-classic:1.4.5"
 
     // util
     implementation "com.google.guava:guava:31.1-jre"
     implementation "org.apache.commons:commons-lang3:3.12.0"
     implementation "org.apache.commons:commons-collections4:4.4"
-    implementation "commons-net:commons-net:3.8.0"
+    implementation "commons-net:commons-net:3.9.0"
     implementation "commons-validator:commons-validator:1.7"
     implementation "net.rakugakibox.util:yaml-resource-bundle:1.2"
 }

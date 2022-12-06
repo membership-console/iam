@@ -10,19 +10,18 @@ import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -37,7 +36,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Configuration
-@EnableWebSecurity
+@Import(OAuth2AuthorizationServerConfiguration.class)
 public class AuthorizationServerConfig {
 
     @Bean
@@ -62,13 +61,8 @@ public class AuthorizationServerConfig {
 
     @Bean
     public OAuth2AuthorizationConsentService authorizationConsentService(final JdbcTemplate jdbcTemplate,
-        RegisteredClientRepository registeredClientRepository) {
+        final RegisteredClientRepository registeredClientRepository) {
         return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
-    }
-
-    @Bean
-    public ProviderSettings providerSettings() {
-        return ProviderSettings.builder().build();
     }
 
     @Bean
@@ -95,7 +89,7 @@ public class AuthorizationServerConfig {
             final var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             return keyPairGenerator.generateKeyPair();
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new IllegalStateException(ex);
         }
     }

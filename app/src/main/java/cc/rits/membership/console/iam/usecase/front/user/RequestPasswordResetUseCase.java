@@ -48,15 +48,16 @@ public class RequestPasswordResetUseCase {
         this.passwordResetTokenRepository.insert(passwordResetToken);
 
         // パスワード再発行メールを送信
-        final var stringBuilder = new StringBuilder();
-        stringBuilder.append("パスワード再発行の申請を受け付けました。\n");
-        stringBuilder.append("\n");
-        stringBuilder.append("パスワードの再設定をご希望の場合は、下記URLから新しいパスワードをご登録ください。\n");
-        stringBuilder.append("\n");
-        stringBuilder.append("▼パスワードの再設定URL\n");
-        stringBuilder.append(String.format("%s/%s\n", this.projectProperty.getPasswordResetUrl(), passwordResetToken.getToken()));
-        stringBuilder.append("※ URLの有効期限は30分間です");
-        this.mailUtil.send(List.of(user.getEmail()), "【要確認】パスワード再発行のお知らせ", stringBuilder.toString());
+        final var body = String.format("""
+            パスワード再発行の申請を受け付けました。
+
+            パスワードの再設定をご希望の場合は、下記URLから新しいパスワードをご登録ください。
+
+            ▼パスワードの再設定URL
+            %s/%s
+            ※ URLの有効期限は30分間です
+            """, this.projectProperty.getPasswordResetUrl(), passwordResetToken.getToken());
+        this.mailUtil.send(List.of(user.getEmail()), "【要確認】パスワード再発行のお知らせ", body);
     }
 
 }

@@ -1,8 +1,5 @@
 package cc.rits.membership.console.iam.config.auth;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -10,6 +7,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.exception.UnauthorizedException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 /**

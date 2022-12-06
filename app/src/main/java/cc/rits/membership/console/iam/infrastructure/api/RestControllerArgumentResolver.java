@@ -1,7 +1,5 @@
 package cc.rits.membership.console.iam.infrastructure.api;
 
-import java.util.Objects;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +16,7 @@ import cc.rits.membership.console.iam.domain.model.UserModel;
 import cc.rits.membership.console.iam.domain.repository.IClientRepository;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.exception.UnauthorizedException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -32,16 +31,14 @@ public class RestControllerArgumentResolver implements HandlerMethodArgumentReso
     private final IClientRepository clientRepository;
 
     @Override
-    public boolean supportsParameter(@Nullable final MethodParameter parameter) {
-        return Objects.nonNull(parameter) //
-            && (parameter.getParameterType().equals(UserModel.class) //
-                || parameter.getParameterType().equals(ClientModel.class));
+    public boolean supportsParameter(@NonNull final MethodParameter parameter) {
+        return (parameter.getParameterType().equals(UserModel.class) || parameter.getParameterType().equals(ClientModel.class));
     }
 
     @Override
-    public Object resolveArgument(@Nullable final MethodParameter parameter, @Nullable final ModelAndViewContainer mavContainer,
+    public Object resolveArgument(@NonNull final MethodParameter parameter, @Nullable final ModelAndViewContainer mavContainer,
         @Nullable final NativeWebRequest webRequest, @Nullable final WebDataBinderFactory binderFactory) {
-        if (this.supportsParameter(parameter) && Objects.nonNull(parameter)) {
+        if (this.supportsParameter(parameter)) {
             final var authentication = SecurityContextHolder.getContext().getAuthentication();
             if (parameter.getParameterType().equals(UserModel.class)) {
                 return this.userDetailsService.loadUserByUsername(authentication.getName());
