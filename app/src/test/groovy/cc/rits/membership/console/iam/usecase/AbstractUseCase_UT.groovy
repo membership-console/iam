@@ -1,7 +1,6 @@
 package cc.rits.membership.console.iam.usecase
 
 import cc.rits.membership.console.iam.AbstractSpecification
-import cc.rits.membership.console.iam.config.auth.IamAuthenticationProvider
 import cc.rits.membership.console.iam.domain.repository.IClientRepository
 import cc.rits.membership.console.iam.domain.repository.IPasswordResetTokenRepository
 import cc.rits.membership.console.iam.domain.repository.IUserGroupRepository
@@ -11,10 +10,12 @@ import cc.rits.membership.console.iam.domain.service.UserGroupService
 import cc.rits.membership.console.iam.domain.service.UserService
 import cc.rits.membership.console.iam.util.AuthUtil
 import cc.rits.membership.console.iam.util.MailUtil
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import org.spockframework.spring.SpringBean
-
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpSession
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.web.context.SecurityContextRepository
 
 /**
  * UseCase単体テストの基底クラス
@@ -22,13 +23,18 @@ import javax.servlet.http.HttpSession
 abstract class AbstractUseCase_UT extends AbstractSpecification {
 
     @SpringBean
-    IamAuthenticationProvider authenticationProvider = Mock()
+    AuthenticationProvider authenticationProvider = Mock()
+
+    @SpringBean
+    SecurityContextRepository securityContextRepository = Mock()
 
     @SpringBean
     HttpSession httpSession = Mock()
 
     @SpringBean
     HttpServletRequest httpServletRequest = Mock()
+
+    HttpServletResponse httpServletResponse = Mock()
 
     @SpringBean
     UserService userService = Mock()

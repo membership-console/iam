@@ -3,12 +3,10 @@ package cc.rits.membership.console.iam.infrastructure.api;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,6 +24,8 @@ import cc.rits.membership.console.iam.exception.BaseException;
 import cc.rits.membership.console.iam.exception.ErrorCode;
 import cc.rits.membership.console.iam.infrastructure.api.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -145,7 +145,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(@Nullable final MethodArgumentNotValidException exception,
-        @Nullable final HttpHeaders headers, @Nullable final HttpStatus status, @Nullable final WebRequest request) {
+        @Nullable final HttpHeaders headers, @Nullable final HttpStatusCode status, @Nullable final WebRequest request) {
         return this.buildResponseEntity(ErrorCode.INVALID_REQUEST_PARAMETER);
     }
 
@@ -160,7 +160,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable final HttpMessageNotReadableException exception,
-        @Nullable final HttpHeaders headers, @Nullable final HttpStatus status, @Nullable final WebRequest request) {
+        @Nullable final HttpHeaders headers, @Nullable final HttpStatusCode status, @Nullable final WebRequest request) {
         return this.buildResponseEntity(ErrorCode.INVALID_REQUEST_PARAMETER);
     }
 

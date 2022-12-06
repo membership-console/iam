@@ -1,7 +1,7 @@
 package cc.rits.membership.console.iam.config;
 
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.SpringDocUtils;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
