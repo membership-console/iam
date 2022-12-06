@@ -3,7 +3,6 @@ package cc.rits.membership.console.iam.domain.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import cc.rits.membership.console.iam.enums.Role;
 import cc.rits.membership.console.iam.infrastructure.db.entity.UserGroupRole;
@@ -43,7 +42,7 @@ public class UserGroupModel implements Serializable {
             .map(Role::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

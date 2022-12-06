@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -42,14 +41,14 @@ public class UserRepository implements IUserRepository {
         example.createCriteria().andIdIn(ids);
         return this.userMapper.selectByExample(example).stream() //
             .map(User::getEmail) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
     public List<UserModel> selectAll() {
         return this.userMapper.selectAll().stream() //
             .map(UserModel::new) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class UserRepository implements IUserRepository {
         if (!userModel.getUserGroups().isEmpty()) {
             final var userGroupIds = userModel.getUserGroups().stream() //
                 .map(UserGroupModel::getId) //
-                .collect(Collectors.toList());
+                .toList();
             this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
         }
     }
@@ -76,7 +75,7 @@ public class UserRepository implements IUserRepository {
         if (!userModel.getUserGroups().isEmpty()) {
             final var userGroupIds = userModel.getUserGroups().stream() //
                 .map(UserGroupModel::getId) //
-                .collect(Collectors.toList());
+                .toList();
             this.userMapper.addUserToUserGroups(user.getId(), userGroupIds);
         }
     }

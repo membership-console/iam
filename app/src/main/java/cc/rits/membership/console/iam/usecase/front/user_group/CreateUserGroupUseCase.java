@@ -1,7 +1,6 @@
 package cc.rits.membership.console.iam.usecase.front.user_group;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +47,7 @@ public class CreateUserGroupUseCase {
             .map(Role::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
         final var userGroup = UserGroupModel.builder() //
             .name(requestBody.getName()) //
             .roles(userGroupRoles).build();

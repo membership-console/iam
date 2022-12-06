@@ -20,7 +20,7 @@ public class UserGroupsResponse {
     /**
      * ユーザグループリスト
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<UserGroupResponse> userGroups;
 
 }

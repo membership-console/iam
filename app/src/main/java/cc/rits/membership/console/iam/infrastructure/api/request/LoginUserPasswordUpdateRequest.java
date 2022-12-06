@@ -19,13 +19,13 @@ public class LoginUserPasswordUpdateRequest implements BaseRequest {
     /**
      * 古いパスワード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String oldPassword;
 
     /**
      * 新しいパスワード
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String newPassword;
 
     /**

@@ -1,7 +1,6 @@
 package cc.rits.membership.console.iam.infrastructure.api.response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import cc.rits.membership.console.iam.domain.model.ClientModel;
 import cc.rits.membership.console.iam.enums.Scope;
@@ -23,25 +22,25 @@ public class ClientResponse {
     /**
      * ID
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String id;
 
     /**
      * クライアント名
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String name;
 
     /**
      * クライアントID
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String clientId;
 
     /**
      * スコープリスト
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<String> scopes;
 
     public ClientResponse(final ClientModel clientModel) {
@@ -50,7 +49,7 @@ public class ClientResponse {
         this.clientId = clientModel.getClientId();
         this.scopes = clientModel.getScopes().stream() //
             .map(Scope::getName) //
-            .collect(Collectors.toList());;
+            .toList();
     }
 
 }

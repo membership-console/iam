@@ -1,7 +1,6 @@
 package cc.rits.membership.console.iam.usecase.front.client;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +49,7 @@ public class CreateClientUseCase {
             .map(Scope::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
         final var client = ClientModel.builder() //
             .name(requestBody.getName()) //
             .scopes(scopes) //

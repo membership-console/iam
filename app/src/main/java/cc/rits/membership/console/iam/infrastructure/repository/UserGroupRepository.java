@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +29,7 @@ public class UserGroupRepository implements IUserGroupRepository {
 
     @Override
     public List<UserGroupModel> selectAll() {
-        return this.userGroupMapper.selectAll().stream().map(UserGroupModel::new).collect(Collectors.toList());
+        return this.userGroupMapper.selectAll().stream().map(UserGroupModel::new).toList();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class UserGroupRepository implements IUserGroupRepository {
 
         return this.userGroupMapper.selectByIds(ids).stream() //
             .map(UserGroupModel::new) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override

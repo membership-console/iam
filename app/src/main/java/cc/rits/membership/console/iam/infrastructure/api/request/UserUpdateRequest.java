@@ -22,32 +22,32 @@ public class UserUpdateRequest implements BaseRequest {
     /**
      * ファーストネーム
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String firstName;
 
     /**
      * ラストネーム
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String lastName;
 
     /**
      * メールアドレス
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String email;
 
     /**
      * 入学年度
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     Integer entranceYear;
 
     /**
      * ユーザグループIDリスト
      */
     @Singular
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<Integer> userGroupIds;
 
     /**

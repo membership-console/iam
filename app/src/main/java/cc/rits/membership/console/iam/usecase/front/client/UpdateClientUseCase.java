@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.usecase.front.client;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +56,7 @@ public class UpdateClientUseCase {
             .map(Scope::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
         client.setName(requestBody.getName());
         client.setScopes(scopes);
         this.clientRepository.updateNameAndScopes(client);

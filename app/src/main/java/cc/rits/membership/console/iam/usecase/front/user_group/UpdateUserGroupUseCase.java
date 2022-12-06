@@ -2,7 +2,6 @@ package cc.rits.membership.console.iam.usecase.front.user_group;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +55,7 @@ public class UpdateUserGroupUseCase {
             .map(Role::find) //
             .filter(Optional::isPresent) //
             .map(Optional::get) //
-            .collect(Collectors.toList());
+            .toList();
         userGroup.setName(requestBody.getName());
         userGroup.setRoles(userGroupRoles);
         this.userGroupRepository.update(userGroup);

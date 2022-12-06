@@ -22,19 +22,19 @@ public class EmailSendRequest implements BaseRequest {
     /**
      * ユーザIDリスト
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<Integer> userIds;
 
     /**
      * 件名
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String subject;
 
     /**
      * 本文
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String body;
 
     /**

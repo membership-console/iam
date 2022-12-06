@@ -3,7 +3,6 @@ package cc.rits.membership.console.iam.domain.model;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import cc.rits.membership.console.iam.annotation.SwaggerHiddenParameter;
 import cc.rits.membership.console.iam.enums.Role;
@@ -65,7 +64,7 @@ public class UserModel implements Serializable {
         this.entranceYear = user.getEntranceYear();
         this.userGroups = user.getUserGroups().stream() //
             .map(UserGroupModel::new) //
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**

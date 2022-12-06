@@ -1,7 +1,6 @@
 package cc.rits.membership.console.iam.infrastructure.api.response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import cc.rits.membership.console.iam.domain.model.UserGroupModel;
 import cc.rits.membership.console.iam.enums.Role;
@@ -23,25 +22,25 @@ public class UserGroupResponse {
     /**
      * ユーザグループID
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     Integer id;
 
     /**
      * ユーザグループ名
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     String name;
 
     /**
      * ロールリスト
      */
-    @Schema(required = true)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     List<Integer> roles;
 
     public UserGroupResponse(final UserGroupModel userGroupModel) {
         this.id = userGroupModel.getId();
         this.name = userGroupModel.getName();
-        this.roles = userGroupModel.getRoles().stream().map(Role::getId).collect(Collectors.toList());
+        this.roles = userGroupModel.getRoles().stream().map(Role::getId).toList();
     }
 
 }
